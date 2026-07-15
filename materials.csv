@@ -1,0 +1,38 @@
+﻿#,Material,Material Code,Reorder Level,Material Category
+,Rayban,100,2,1
+,Guess,101,2,1
+,Boss,102,2,1
+,Che,103,2,1
+,Slazenger,104,2,1
+,Bifocals,105,0,2
+,proggrassive,106,0,2
+,Blue filter,107,0,2
+,Photogray,108,0,2
+,Flat top,109,0,2
+,Polarized,110,2,3
+,Non polarised,111,2,3
+,Metal,112,10,4
+,Plastic,113,10,4
+,H/R,114,10,4
+,Nose Pad ,115,20,5
+,Spring  nuts ,116,20,6
+,Nose pad nuts ,117,20,6
+,Sunglasses nuts,118,20,6
+,Plastic,119,20,7
+,Leather,120,20,7
+,Pouch,121,20,7
+,Cleaning Liquid ,122,20,8
+,With power,123,20,9
+,Without power,124,20,9
+,Frame Cleaning Matching ,125,5,10
+,Optometrist ,126,0,11
+,Consultant,127,0,11
+,Nose pads,128,0,12
+,Arms,129,0,12
+,Black (Ear Tip),130,10,13
+,Brown (Ear Tip),131,10,13
+,Black  (Temple Chain),132,10,14
+,Brown  (Temple Chain),133,10,14
+,Ear Machine ,134,0,15
+,Frame ,135,0,16
+,Full service,136,0,16
