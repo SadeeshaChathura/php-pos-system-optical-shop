@@ -28,7 +28,7 @@
 
                     <input type="password" name="password" class="form-control" placeholder="Password">
 
-                    <select name="company" id="company" class="form-control" required>
+                    <select name="company" id="company" class="form-control" reui>
                         <option value="">Select Company</option>
                         <?php foreach($companylist as $row){ ?>
                             <option value="<?php echo $row->idtbl_company ?>">
@@ -37,7 +37,7 @@
                         <?php } ?>
                     </select>
 
-                    <select name="branch" id="branch" class="form-control" required>
+                    <select name="branch" id="branch" class="form-control">
                         <option value="">Select Branch</option>
                     </select>
 

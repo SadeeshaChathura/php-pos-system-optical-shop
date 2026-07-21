@@ -37,7 +37,7 @@
                         <?php } ?>
                     </select>
 
-                    <select name="branch" id="branch" class="form-control" required>
+                    <select name="branch" id="branch" class="form-control">
                         <option value="">Select Branch</option>
                     </select>
 
