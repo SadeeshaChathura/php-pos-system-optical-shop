@@ -104,6 +104,10 @@ class Welcome extends CI_Controller {
 		$this->load->view('dashboard', $result);
 	}
 	public function Getbranchaccocompany(){
+		$recordID=$this->input->post('recordID');
+        $result=CompanyBranchList($recordID);
+	}
+	public function Getbranchaccocompany(){
 		$recordID = $this->input->post('recordID');
 		$result   = CompanyBranchList($recordID);
 		echo json_encode($result);

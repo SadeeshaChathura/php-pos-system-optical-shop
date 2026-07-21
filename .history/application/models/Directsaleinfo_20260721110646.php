@@ -360,8 +360,10 @@ class Directsaleinfo extends CI_Model {
     {
         $this->db->trans_begin();
 
+        $userID    = isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
         $companyid = $_SESSION['companyid'];
-        $branchid  = $_SESSION['branchid'];
+        $branchid  = isset($_SESSION['branchid']) ? $_SESSION['branchid'] : null;
+
         $userID = $_SESSION['userid'];
 
         $tableData       = $this->input->post('tableData');
@@ -711,9 +713,9 @@ class Directsaleinfo extends CI_Model {
     public function Settleadvancebalance(){
         $this->db->trans_begin();
 
-        $companyid = $_SESSION['companyid'];
-        $branchid  = $_SESSION['branchid'];
-        $userID = $_SESSION['userid'];
+        $userID    = isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
+        $companyid = isset($_SESSION['companyid']) ? $_SESSION['companyid'] : null;
+        $branchid  = isset($_SESSION['branchid']) ? $_SESSION['branchid'] : null;
 
         $invoiceID = $this->input->post('invoiceID');
         $amount    = (float) $this->input->post('amount');
