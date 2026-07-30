@@ -46,6 +46,8 @@ include "include/topnavbar.php";
             									<th>Invoice Date</th>
                                                 <th>Invoice No.</th>
             									<th>Customer</th>
+                                                <th>Gross Total</th>
+                                                <th>Discount</th>
             									<th>Net Total</th>
                                                 <th>Payment Method</th>
             									<th>Action</th>
@@ -177,7 +179,23 @@ include "include/topnavbar.php";
                     },
                     {
                         "targets": -1,
-                        "className": 'text-left',
+                        "className": 'text-right',
+                        "data": null,
+                        "render": function(data, type, full) {
+                            return addCommas(parseFloat(full['grosstotal']).toFixed(2));
+                        }
+                    },
+                    {
+                        "targets": -1,
+                        "className": 'text-right',
+                        "data": null,
+                        "render": function(data, type, full) {
+                            return addCommas(parseFloat(full['discount']).toFixed(2));
+                        }
+                    },
+                    {
+                        "targets": -1,
+                        "className": 'text-right',
                         "data": null,
                         "render": function(data, type, full) {
                             return addCommas(parseFloat(full['nettotal']).toFixed(2));
