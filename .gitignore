@@ -30,3 +30,10 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 *.sublime-project
 /tests/tests/
 /tests/results/
+
+# History folder (VS Code local history extension)
+.history/
+
+# Sensitive config files
+application/config/database.php
+scripts/config.php
