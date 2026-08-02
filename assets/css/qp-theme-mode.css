@@ -553,7 +553,7 @@ html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.flatpickr
 html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.flatpickr-disabled:hover {
   color: #3a4756 !important;
 }
-   --------------------------------------------------------------------------
+   /*--------------------------------------------------------------------------
    The .modal-body tfoot rule above only covers tables inside Bootstrap
    modals. Report pages like GRN Report / Purchase Order Report render
    their DataTable footerCallback totals directly on the page (no modal
@@ -838,4 +838,28 @@ html[data-color-mode="dark"] .dropdown-header {
 }
 html[data-color-mode="dark"] .dropdown-user-details-name {
   color: var(--erp-text) !important;
+}
+
+/* ==========================================================================
+   THEME TRIGGER ICON ALIGNMENT
+   --------------------------------------------------------------------------
+   .qp-theme-trigger wraps its icon in an extra <span id="qpThemeTriggerIcon">
+   (needed so JS can safely re-render the Feather icon on mode switch
+   without losing the reference). That extra span doesn't inherit the same
+   flex/line-height centering the other navbar buttons (.qp-voice-trigger,
+   .qp-notif-trigger, #sidebarToggle) get from centering a single <i>
+   directly — so the theme icon sits a few px higher than its neighbors.
+   Forcing both the button and the inner span to flex-center fixes it.
+   ========================================================================== */
+
+.qp-theme-trigger {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+#qpThemeTriggerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
 }

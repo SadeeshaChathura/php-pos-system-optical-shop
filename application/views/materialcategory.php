@@ -184,7 +184,6 @@ include "include/topnavbar.php";
         $('#recordID').val('');
         $('#recordOption').val('1');
         $('#category').val('');
-        $('#code').val('');
         $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Add');
     }
 

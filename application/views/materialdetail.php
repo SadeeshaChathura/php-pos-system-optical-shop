@@ -218,7 +218,6 @@ include "include/topnavbar.php";
         $('#recordID').val('');
         $('#recordOption').val('1');
         $('#name').val('');
-        $('#code').val('');
         $('#materialcategory').val('');
         $('#rol').val('');
         $('#comment').val('');

@@ -30,33 +30,41 @@
                 <i data-feather="bell"></i>
                 <span class="qp-notif-badge">3</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownNotifications">
-                <h6 class="dropdown-notifications-header d-flex align-items-center justify-content-between">
-                    Notifications
-                    <i data-feather="settings"></i>
-                </h6>
-                <a class="dropdown-item dropdown-notifications-item d-flex align-items-center" href="javascript:void(0);">
-                    <div class="dropdown-notifications-item-icon"><i data-feather="file-text"></i></div>
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-details">2 min ago</div>
-                        <div class="dropdown-notifications-item-content-text">New invoice INV-000231 created</div>
-                    </div>
-                </a>
-                <a class="dropdown-item dropdown-notifications-item d-flex align-items-center" href="javascript:void(0);">
-                    <div class="dropdown-notifications-item-icon"><i data-feather="alert-triangle"></i></div>
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-details">1 hour ago</div>
-                        <div class="dropdown-notifications-item-content-text">Stock low: Paracetamol 500mg</div>
-                    </div>
-                </a>
-                <a class="dropdown-item dropdown-notifications-item d-flex align-items-center" href="javascript:void(0);">
-                    <div class="dropdown-notifications-item-icon"><i data-feather="truck"></i></div>
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-details">Yesterday</div>
-                        <div class="dropdown-notifications-item-content-text">PO KND/PO-000045 approved</div>
-                    </div>
-                </a>
-                <div class="dropdown-notifications-footer">View all notifications</div>
+            <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up qp-notif-menu" aria-labelledby="navbarDropdownNotifications">
+                <div class="qp-notif-header">
+                    <span>Notifications</span>
+                    <span class="qp-notif-count-pill">3 new</span>
+                </div>
+
+                <div class="qp-notif-list">
+                    <a class="qp-notif-item qp-notif-unread" href="javascript:void(0);">
+                        <div class="qp-notif-icon qp-notif-icon-info"><i data-feather="file-text"></i></div>
+                        <div class="qp-notif-content">
+                            <div class="qp-notif-text">New invoice <strong>INV-000231</strong> created</div>
+                            <div class="qp-notif-time">2 min ago</div>
+                        </div>
+                        <span class="qp-notif-dot"></span>
+                    </a>
+
+                    <a class="qp-notif-item qp-notif-unread" href="javascript:void(0);">
+                        <div class="qp-notif-icon qp-notif-icon-warning"><i data-feather="alert-triangle"></i></div>
+                        <div class="qp-notif-content">
+                            <div class="qp-notif-text">Stock low: <strong>Paracetamol 500mg</strong></div>
+                            <div class="qp-notif-time">1 hour ago</div>
+                        </div>
+                        <span class="qp-notif-dot"></span>
+                    </a>
+
+                    <a class="qp-notif-item" href="javascript:void(0);">
+                        <div class="qp-notif-icon qp-notif-icon-success"><i data-feather="truck"></i></div>
+                        <div class="qp-notif-content">
+                            <div class="qp-notif-text">PO <strong>KND/PO-000045</strong> approved</div>
+                            <div class="qp-notif-time">Yesterday</div>
+                        </div>
+                    </a>
+                </div>
+
+                <a href="javascript:void(0);" class="qp-notif-footer">View all notifications</a>
             </div>
         </li>
 
@@ -109,6 +117,30 @@
                         <div class="text-light"><?php echo $_SESSION['typename']; ?></div>
                     </div>
                 </h6>
+
+                <!-- Contact Support -->
+                <div class="qp-support-section">
+                    <div class="qp-support-label">Need help?</div>
+                    <a class="dropdown-item qp-support-item" 
+                    href="https://wa.me/94702186386?text=<?php echo rawurlencode('Hi, I need support with QuantumPay ERP for ' . (isset($_SESSION['company']) ? $_SESSION['company'] : ucfirst($_SESSION['name']))); ?>" 
+                    target="_blank" rel="noopener">
+                        <div class="qp-support-icon qp-support-icon-whatsapp"><i class="fab fa-whatsapp"></i></div>
+                        <div class="qp-support-text">
+                            <span class="qp-support-title">WhatsApp Support</span>
+                            <span class="qp-support-sub">Chat with our team</span>
+                        </div>
+                    </a>
+                    <a class="dropdown-item qp-support-item" 
+                    href="mailto:info@calcitexit.com?subject=<?php echo rawurlencode('QuantumPay ERP Support Request - ' . (isset($_SESSION['company']) ? $_SESSION['company'] : ucfirst($_SESSION['name']))); ?>" >
+                        <div class="qp-support-icon qp-support-icon-email"><i data-feather="mail"></i></div>
+                        <div class="qp-support-text">
+                            <span class="qp-support-title">Email Support</span>
+                            <span class="qp-support-sub">info@calcitexit.com</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="<?php echo base_url() ?>Welcome/Logout">
                     <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                     Logout
