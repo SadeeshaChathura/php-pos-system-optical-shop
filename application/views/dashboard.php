@@ -10,36 +10,38 @@ include "include/topnavbar.php";
     align-items: center;
     width: 64px;
     height: 64px;
-    border-radius: 16px;
+    border-radius: var(--erp-radius-sm, 0.4rem);
     margin-bottom: 12px;
 }
 .stat-card {
-    background: #fff;
-    border-radius: 16px;
+    background: var(--erp-surface, #fff);
+    border: 1px solid var(--erp-border, #e5e9f0);
+    border-radius: var(--erp-radius, 0.6rem);
     padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    box-shadow: var(--erp-shadow, 0 2px 10px rgba(30,41,59,0.06));
     transition: transform .25s ease, box-shadow .25s ease;
     height: 100%;
 }
 .stat-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    transform: translateY(-4px);
+    box-shadow: var(--erp-shadow-md, 0 8px 24px rgba(30,41,59,0.09));
 }
 .stat-label {
     font-size: .78rem;
     font-weight: 700;
     letter-spacing: .6px;
     text-transform: uppercase;
-    color: #8a8f9a;
+    color: var(--erp-text-muted, #8a8f9a);
 }
 .stat-value {
     font-size: 1.6rem;
     font-weight: 800;
-    color: #222;
+    color: var(--erp-text, #222);
 }
 .stat-card .btn-block.mt-3 {
     font-weight: 700;
     border: none;
+    border-radius: var(--erp-radius-sm, 0.4rem);
 }
 .btn-products {
     background: #f0ad4e;
@@ -55,15 +57,16 @@ include "include/topnavbar.php";
     box-shadow: 0 0 0 .2rem rgba(240,173,78,.4) !important;
 }
 .panel-card {
-    background:#fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    background: var(--erp-surface, #fff);
+    border: 1px solid var(--erp-border, #e5e9f0);
+    border-radius: var(--erp-radius, 0.6rem);
+    box-shadow: var(--erp-shadow, 0 2px 10px rgba(30,41,59,0.06));
     padding: 1.5rem;
     height: 100%;
 }
 .panel-title {
     font-weight: 700;
-    color: #333;
+    color: var(--erp-text, #333);
     margin-bottom: 1rem;
     display:flex;
     align-items:center;
@@ -74,12 +77,12 @@ include "include/topnavbar.php";
     justify-content:space-between;
     align-items:center;
     padding: .6rem 0;
-    border-bottom: 1px solid #f0f1f4;
+    border-bottom: 1px solid var(--erp-border, #f0f1f4);
 }
 .movement-row:last-child{ border-bottom:none; }
 .badge-soft {
     padding: .3rem .65rem;
-    border-radius: 50px;
+    border-radius: 999px;
     font-size: .75rem;
     font-weight: 700;
 }
@@ -89,7 +92,7 @@ include "include/topnavbar.php";
     background: rgba(255,255,255,.15);
     backdrop-filter: blur(10px);
     padding: .65rem 1.25rem;
-    border-radius: 50px;
+    border-radius: 999px;
     border: 2px solid rgba(255,255,255,.3);
 }
 .welcome-company-badge .welcome-icon {
@@ -105,21 +108,21 @@ include "include/topnavbar.php";
 /* Reorder alert row styling */
 .reorder-alert {
     background: rgba(214, 69, 69, 0.06);
-    border-left: 4px solid #d64545;
+    border-left: 4px solid var(--erp-danger, #d64545);
 }
 
 /* Calendar card */
-/* Calendar card */
 .calendar-card {
-    background:#fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    background: var(--erp-surface, #fff);
+    border: 1px solid var(--erp-border, #e5e9f0);
+    border-radius: var(--erp-radius, 0.6rem);
+    box-shadow: var(--erp-shadow, 0 2px 10px rgba(30,41,59,0.06));
     padding: 1.25rem;
     height: 100%;
 }
 .calendar-card .calendar-header {
     font-weight: 700;
-    color: #333;
+    color: var(--erp-text, #333);
     margin-bottom: .75rem;
     display:flex;
     align-items:center;
@@ -128,31 +131,31 @@ include "include/topnavbar.php";
 .calendar-selected-note {
     margin-top: .85rem;
     padding-top: .85rem;
-    border-top: 1px solid #f0f1f4;
+    border-top: 1px solid var(--erp-border, #f0f1f4);
     font-size: .85rem;
-    color: #555;
+    color: var(--erp-text-muted, #555);
     display:flex;
     align-items:center;
     justify-content:space-between;
     flex-wrap: wrap;
     gap: .5rem;
 }
-.calendar-selected-note strong { color:#222; }
+.calendar-selected-note strong { color: var(--erp-text, #222); }
 .today-link {
     font-size: .78rem;
     font-weight: 700;
-    color: #495057;
+    color: var(--erp-text-muted, #495057);
     text-decoration: none;
 }
-.today-link:hover { text-decoration: underline; color:#212529; }
+.today-link:hover { text-decoration: underline; color: var(--erp-text, #212529); }
 
-/* Inline flatpickr, professional neutral theme */
+/* Inline flatpickr, professional neutral theme matching the rest of the app */
 #inlineDatePicker { width: 100%; }
 .flatpickr-calendar.inline {
     width: 100% !important;
     box-shadow: none;
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
+    border: 1px solid var(--erp-border, #e9ecef);
+    border-radius: var(--erp-radius-sm, 0.4rem);
     overflow: hidden;
 }
 .flatpickr-calendar.inline .flatpickr-innerContainer,
@@ -165,8 +168,8 @@ include "include/topnavbar.php";
 
 /* Header (month/year) */
 .flatpickr-calendar.inline .flatpickr-month {
-    background: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
+    background: var(--erp-bg, #f8f9fa);
+    border-bottom: 1px solid var(--erp-border, #e9ecef);
     height: 44px;
 }
 .flatpickr-current-month {
@@ -174,40 +177,40 @@ include "include/topnavbar.php";
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months,
 .flatpickr-current-month input.cur-year {
-    color: #212529 !important;
+    color: var(--erp-text, #212529) !important;
     font-weight: 700;
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months option {
-    color: #212529;
+    color: var(--erp-text, #212529);
 }
 .flatpickr-months .flatpickr-prev-month,
 .flatpickr-months .flatpickr-next-month {
-    fill: #495057;
-    color: #495057;
+    fill: var(--erp-text-muted, #495057);
+    color: var(--erp-text-muted, #495057);
 }
 .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-months .flatpickr-next-month:hover svg {
-    fill: #212529;
+    fill: var(--erp-text, #212529);
 }
 
 /* Weekday row */
 .flatpickr-weekdays {
-    background: #fff;
-    border-bottom: 1px solid #e9ecef;
+    background: var(--erp-surface, #fff);
+    border-bottom: 1px solid var(--erp-border, #e9ecef);
 }
 span.flatpickr-weekday {
-    background: #fff !important;
-    color: #6c757d !important;
+    background: var(--erp-surface, #fff) !important;
+    color: var(--erp-text-muted, #6c757d) !important;
     font-weight: 700;
     font-size: .72rem;
     text-transform: uppercase;
 }
 
-/* Day numbers - black by default */
+/* Day numbers - default text color */
 .flatpickr-calendar.inline .flatpickr-day {
     max-width: none;
-    border-radius: 8px;
-    color: #000 !important;
+    border-radius: var(--erp-radius-sm, 0.4rem);
+    color: var(--erp-text, #000) !important;
     font-weight: 500;
     background: transparent;
     border-color: transparent;
@@ -221,34 +224,34 @@ span.flatpickr-weekday {
     color: #dee2e6 !important;
 }
 
-/* Hover on a normal (non-selected) day - light gray bg, keep black text */
+/* Hover on a normal (non-selected) day */
 .flatpickr-calendar.inline .flatpickr-day:hover,
 .flatpickr-calendar.inline .flatpickr-day:focus {
-    background: #e9ecef !important;
-    border-color: #e9ecef !important;
-    color: #000 !important;
+    background: var(--erp-primary-soft, #e9ecef) !important;
+    border-color: var(--erp-primary-soft, #e9ecef) !important;
+    color: var(--erp-text, #000) !important;
 }
 
-/* Today - outline only, black text */
+/* Today - outline only */
 .flatpickr-calendar.inline .flatpickr-day.today {
-    border: 1px solid #adb5bd !important;
-    color: #000 !important;
+    border: 1px solid var(--erp-text-muted, #adb5bd) !important;
+    color: var(--erp-text, #000) !important;
 }
 .flatpickr-calendar.inline .flatpickr-day.today:hover {
-    border-color: #495057 !important;
-    background: #e9ecef !important;
-    color: #000 !important;
+    border-color: var(--erp-primary, #495057) !important;
+    background: var(--erp-primary-soft, #e9ecef) !important;
+    color: var(--erp-text, #000) !important;
 }
 
-/* Selected day - dark bg, WHITE text, and this must win over hover/focus/active */
+/* Selected day - primary bg, white text, wins over hover/focus/active */
 .flatpickr-calendar.inline .flatpickr-day.selected,
 .flatpickr-calendar.inline .flatpickr-day.selected:hover,
 .flatpickr-calendar.inline .flatpickr-day.selected:focus,
 .flatpickr-calendar.inline .flatpickr-day.selected:active,
 .flatpickr-calendar.inline .flatpickr-day.selected.today,
 .flatpickr-calendar.inline .flatpickr-day.selected.today:hover {
-    background: #212529 !important;
-    border-color: #212529 !important;
+    background: var(--erp-primary, #212529) !important;
+    border-color: var(--erp-primary, #212529) !important;
     color: #fff !important;
 }
 @media (max-width: 767.98px) {
@@ -267,22 +270,18 @@ span.flatpickr-weekday {
     </div>
     <div id="layoutSidenav_content">
         <main>
-            <div class="page-header text-white">
+            <div class="page-header shadow">
                 <div class="container-fluid">
                     <div class="page-header-content py-3 d-flex align-items-center justify-content-between">
                         <h1 class="page-header-title d-flex align-items-center">
                             <div class="page-header-icon mr-2"><i class="fas fa-store-alt"></i></div>
                             <span>Dashboard</span>
                         </h1>
-                        <div class="welcome-company-badge">
-                            <div class="welcome-icon"><i class="fas fa-building"></i></div>
-                            <span class="company-name"><?php echo $_SESSION['company']; ?></span>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="container-fluid mt-4 ml-2">
+            <div class="container-fluid mt-2 p-0 p-2">
 
                 <div class="row">
                     <!-- CALENDAR CARD -->
@@ -410,7 +409,7 @@ span.flatpickr-weekday {
                     </div>
                     <?php if (!empty($overdueOrders)): ?>
                     <div class="col-12 mb-3">
-                        <div class="panel-card" style="border-left:4px solid #d64545;">
+                        <div class="panel-card" style="border-left:4px solid var(--erp-danger, #d64545);">
                             <div class="panel-title"><i class="fas fa-clock text-danger"></i> Overdue Advance Orders
                                 <span class="badge-soft" style="background:#fdeaea;color:#d64545;"><?php echo count($overdueOrders); ?> overdue</span>
                             </div>

@@ -12,8 +12,14 @@
    NEW IN THIS VERSION:
      - .sidenav-collapsed modifier -> icon-only rail
      - hover tooltips on collapsed single links (data-title attr)
-     - hover flyout submenus on collapsed grouped links
+     - CLICK-triggered popup submenu on collapsed grouped links, with a
+       backdrop, title header, and close (x) button — see sidebar-popover.js.
+       Replaces the earlier hover-flyout approach (more reliable on
+       touch/tablet, and doesn't fire by accident on mouse-over).
      - bigger icon/text sizing, whiter text throughout
+
+   Requires: .collapse must be a DIRECT CHILD of .sidenav-item in the markup
+   (see corrected menubar.php) and sidebar-popover.js loaded after jQuery/BS.
    ========================================================================== */
 
 :root {
@@ -35,6 +41,7 @@
   --qp-radius-sm: 8px;
   --qp-sidenav-width: 16.5rem;
   --qp-sidenav-collapsed-width: 5.25rem;
+  --qp-tooltip-bg: #0b3b47;
 }
 
 /* ==========================================================================
@@ -129,9 +136,7 @@
   white-space: nowrap;
 }
 
-/* Wrapper around a top-level link (and its submenu, if any).
-   Needed so hover on the icon can reveal a flyout submenu / tooltip
-   even once the text label is hidden in collapsed mode. */
+/* Wrapper around a top-level link (and its submenu, if any). */
 .sidenav-item {
   position: relative;
 }
@@ -175,7 +180,7 @@
   color: #fff;
 }
 
-/* Active top-level link (only relevant if you keep a single-link page) */
+/* Active top-level link */
 .sidenav-light .sidenav-menu .nav-link.active {
   background-color: var(--qp-white-16);
   color: #fff !important;
@@ -200,7 +205,7 @@
   color: #fff;
 }
 
-/* Nested submenu */
+/* Nested submenu (expanded sidebar, normal accordion) */
 .sidenav-light .sidenav-menu-nested {
   border-left: 2px solid rgba(255, 255, 255, 0.14);
   margin-left: 1.3rem;
@@ -308,29 +313,22 @@
   padding: 0.95rem 0;
   position: relative;
 }
+
+/* Bigger icons in the collapsed rail — they're the only visual cue left */
 .sidenav-collapsed .sidenav-menu .nav-link .nav-link-icon {
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   padding-right: 0;
   width: auto;
   margin: 0 auto;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
+.sidenav-collapsed .sidenav-item:hover .nav-link .nav-link-icon {
+  transform: scale(1.08);
+}
+
 .sidenav-collapsed .nav-link-text,
 .sidenav-collapsed .sidenav-collapse-arrow {
   display: none !important;
-}
-
-/* Nested submenus are hidden inline while collapsed; they reappear as a
-   hover flyout (below) instead. */
-.sidenav-collapsed .sidenav-menu-nested {
-  display: none !important;
-}
-
-.sidenav-collapsed .sidenav-footer {
-  justify-content: center;
-  padding: 0.85rem 0;
-}
-.sidenav-collapsed .sidenav-footer-content {
-  display: none;
 }
 
 #layoutSidenav_content .page-header {
@@ -424,50 +422,158 @@
   margin: 0 0 1rem 0;
 }
 
-/* --- Flyout submenu for grouped links, e.g. Purchasing, Products --- */
-.sidenav-collapsed .sidenav-item:hover > .nav-link {
-  background-color: var(--qp-white-10);
-  color: #fff;
-}
-.sidenav-collapsed .sidenav-item:hover > .collapse,
-.sidenav-collapsed .sidenav-item:hover > .collapsing {
-  display: block !important;
-  position: absolute;
-  left: calc(100% + 0.5rem);
-  top: 0;
-  min-width: 14rem;
+/* ==========================================================================
+   CLICK-TRIGGERED SUBMENU POPOVER (collapsed rail only)
+   --------------------------------------------------------------------------
+   Opened/closed by sidebar-popover.js, which toggles ".qp-popover-open" on
+   the .sidenav-item and positions the panel with inline top/left (fixed
+   positioning, since the sidebar itself scrolls independently of the page).
+   ========================================================================== */
+
+/* Base state: hidden until JS adds .qp-popover-open to the parent .sidenav-item */
+.sidenav-collapsed .sidenav-item > .collapse {
+  display: none !important;
+  position: fixed;
+  min-width: 15rem;
+  max-width: 18rem;
   background: linear-gradient(180deg, var(--qp-sidenav-start) 0%, var(--qp-sidenav-end) 100%);
   border-radius: var(--qp-radius-md);
-  box-shadow: 0 10px 30px rgba(4, 30, 38, 0.5);
-  padding: 0.6rem;
-  z-index: 1055;
-  animation: qp-tooltip-in 0.12s ease;
+  box-shadow: 0 16px 40px rgba(4, 30, 38, 0.55);
+  padding: 0.5rem;
+  z-index: 1080;
 }
-.sidenav-collapsed .sidenav-item:hover > .collapse::before {
-  content: attr(data-flyout-title);
-  display: block;
-  padding: 0.4rem 0.6rem 0.6rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--qp-white-70);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-  margin-bottom: 0.35rem;
-  white-space: nowrap;
+.sidenav-collapsed .sidenav-item.qp-popover-open > .collapse {
+  display: block !important;
+  animation: qp-popover-in 0.15s ease;
 }
-.sidenav-collapsed .sidenav-item:hover .sidenav-menu-nested {
+.sidenav-collapsed .sidenav-item.qp-popover-open .sidenav-menu-nested {
   display: block !important;
   border-left: none;
   margin-left: 0;
   padding-left: 0;
 }
-.sidenav-collapsed .sidenav-item:hover .sidenav-menu-nested .nav-link {
+.sidenav-collapsed .sidenav-item.qp-popover-open .sidenav-menu-nested .nav-link {
   justify-content: flex-start;
   padding: 0.55rem 0.7rem;
 }
-.sidenav-collapsed .sidenav-item:hover .sidenav-menu-nested .nav-link-text {
+.sidenav-collapsed .sidenav-item.qp-popover-open .sidenav-menu-nested .nav-link-text {
   display: inline;
+}
+.sidenav-collapsed .sidenav-item.qp-popover-open > .nav-link {
+  background-color: var(--qp-white-10);
+  color: #fff;
+}
+
+/* Header row (title + close button), injected by JS on first open */
+.qp-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.6rem 0.55rem;
+  margin-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+.qp-popover-header span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--qp-white-70);
+  white-space: nowrap;
+}
+.qp-popover-close {
+  background: transparent;
+  border: none;
+  color: var(--qp-white-70);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.15rem;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.qp-popover-close:hover {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* Dimming backdrop behind the popover — click to close */
+.qp-popover-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 20, 26, 0.22);
+  z-index: 1070;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease;
+}
+.qp-popover-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+@keyframes qp-popover-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* --- Tooltip for collapsed SINGLE links (Dashboard, Suppliers — no submenu) ---
+   Reads the existing data-title attribute already present on these <a> tags. */
+.sidenav-collapsed .sidenav-item > a.nav-link[data-title]:not([data-toggle="collapse"]) {
+  position: relative;
+}
+.sidenav-collapsed .sidenav-item > a.nav-link[data-title]:not([data-toggle="collapse"])::after {
+  content: attr(data-title);
+  position: absolute;
+  left: calc(100% + 0.75rem);
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  background: var(--qp-tooltip-bg);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--qp-radius-sm);
+  box-shadow: 0 8px 22px rgba(4, 30, 38, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 1060;
+}
+.sidenav-collapsed .sidenav-item > a.nav-link[data-title]:not([data-toggle="collapse"])::before {
+  content: "";
+  position: absolute;
+  left: calc(100% + 0.45rem);
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: var(--qp-tooltip-bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 1060;
+}
+.sidenav-collapsed .sidenav-item:hover > a.nav-link[data-title]:not([data-toggle="collapse"])::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+.sidenav-collapsed .sidenav-item:hover > a.nav-link[data-title]:not([data-toggle="collapse"])::before {
+  opacity: 1;
+}
+
+.sidenav-collapsed .sidenav-footer {
+  justify-content: center;
+  padding: 0.85rem 0;
+}
+.sidenav-collapsed .sidenav-footer-content {
+  display: none;
 }
 
 /* ==========================================================================
@@ -595,11 +701,10 @@
 }
 
 @media (max-width: 991.98px) {
-  /* ... keep everything else from before ... */
-
   /* HARD OVERRIDE: on mobile the sidebar is ALWAYS full-label,
      regardless of sidenav-collapsed / sidenav-toggled state.
-     Icon-only rail mode is a desktop-only feature. */
+     Icon-only rail (and its popover) is a desktop-only feature —
+     sidebar-popover.js already guards for min-width:992px too. */
   .sidenav.sidenav-light,
   .sidenav.sidenav-light.sidenav-collapsed,
   .nav-fixed.sidenav-toggled #layoutSidenav #layoutSidenav_nav .sidenav,
@@ -638,25 +743,23 @@
     padding-right: 0 !important;
   }
 
-  /* Flyout-on-hover trick was for the icon rail only — disable it
-     and let submenus expand inline like normal accordion behavior */
-  .sidenav-collapsed .sidenav-item:hover > .collapse,
-  .sidenav-collapsed .sidenav-item:hover > .collapsing {
+  /* Popover markup falls back to a plain inline Bootstrap accordion on mobile */
+  .sidenav-collapsed .sidenav-item > .collapse {
     position: static !important;
-    left: auto !important;
-    top: auto !important;
+    display: none !important;
     min-width: 0 !important;
+    max-width: none !important;
     background: transparent !important;
     box-shadow: none !important;
     padding: 0 !important;
     animation: none !important;
-    display: none !important; /* let Bootstrap's .collapse.show handle visibility */
   }
   .sidenav-collapsed .collapse.show,
   .sidenav-collapsed .collapsing {
     display: block !important;
   }
-  .sidenav-collapsed .sidenav-item:hover > .collapse::before {
+  .qp-popover-header,
+  .qp-popover-backdrop {
     display: none !important;
   }
   .sidenav-collapsed .sidenav-menu-nested {
@@ -664,18 +767,19 @@
     margin-left: 1.3rem !important;
     padding-left: 0.75rem !important;
   }
+
+  /* tooltips are a desktop-hover affordance only */
+  .sidenav-collapsed .sidenav-item > a.nav-link[data-title]::after,
+  .sidenav-collapsed .sidenav-item > a.nav-link[data-title]::before {
+    display: none !important;
+  }
 }
 @media (max-width: 991.98px) {
-  /* Root cause fix: the nav wrapper must collapse to 0 width on mobile
-     since .sidenav becomes position:fixed and is visually an overlay,
-     not a flex sibling that should reserve space. */
   .nav-fixed #layoutSidenav #layoutSidenav_nav {
     width: 0 !important;
     flex-basis: 0 !important;
-    overflow: visible !important; /* so the fixed child can still render */
+    overflow: visible !important;
   }
-
-  /* Content always takes the full viewport width on mobile */
   #layoutSidenav_content {
     width: 100% !important;
     max-width: 100% !important;

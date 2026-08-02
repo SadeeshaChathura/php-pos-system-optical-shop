@@ -20,33 +20,27 @@ include "include/topnavbar.php";
             </div>
             <div class="container-fluid mt-2 p-0 p-2">
                 <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <span>Purchase Orders</span>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus mr-2"></i>Create Purchase Order</button>
+                    </div>
                     <div class="card-body p-0 p-2">
-                        <div class="row">
-                            <div class="col-12 text-right">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus mr-2"></i>Create Purchase Order</button>
-                                <hr>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="scrollbar pb-3" id="style-2">
-                                    <table class="table table-bordered table-striped table-sm nowrap" id="dataTable">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>PO Number</th>
-                                                <th>Date</th>
-                                                <th>Supplier</th>
-                                                <th>Total</th>
-                                                <th>Confirm Status</th>
-                                                <th>GRN Issue Status</th>
-                                                <th>Remark</th>
-                                                <th class="text-right">Actions</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                            </div>
+                        <div class="scrollbar pb-3" id="style-2">
+                            <table class="table table-bordered table-striped table-sm nowrap" id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>PO Number</th>
+                                        <th>Date</th>
+                                        <th>Supplier</th>
+                                        <th>Total</th>
+                                        <th>Confirm Status</th>
+                                        <th>GRN Issue Status</th>
+                                        <th>Remark</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -55,6 +49,7 @@ include "include/topnavbar.php";
         <?php include "include/footerbar.php"; ?>
     </div>
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
 	aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -67,61 +62,58 @@ include "include/topnavbar.php";
 				</button>
 			</div>
 			<div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
-                        <form id="createorderform" autocomplete="off">
-                            <div class="form-group mb-1">
-                            </div>
-                            <div class="form-row mb-1">
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Order Date*</label>
-                                    <input type="date" class="form-control form-control-sm" placeholder="" name="orderdate" id="orderdate" value="<?php echo date('Y-m-d') ?>" required>
-                                </div>
-                                <div class="col">
-                                <label class="small font-weight-bold text-dark">Due Date*</label>
-                                    <input type="date" class="form-control form-control-sm" placeholder="" name="duedate" id="duedate" value="<?php echo date('Y-m-d') ?>" required>
-                                </div>
-                            </div>
-                            <div class="form-row mb-1">
-                                <div class="col">
-                                <label class="small font-weight-bold text-dark">Supplier*</label>
-                                    <select style="width:100%" class="form-control form-control-sm" name="supplier" id="supplier" required>
-                                        <option value="">Select</option>
-                                        <?php foreach($supplierlist->result() as $rowsupplierlist){ ?>
-                                        <option value="<?php echo $rowsupplierlist->idtbl_supplier ?>"><?php echo $rowsupplierlist->suppliername ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                                <div class="col">
-                                <label class="small font-weight-bold text-dark">Product*</label><br>
-                                <select style="width:100%" class="form-control form-control-sm" name="product" id="product" required>
-                                    <option value="">Select</option>
-                                </select>
-                                </div>
-                            </div>
-                            <div class="form-row mb-1">
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Qty*</label>
-                                    <input type="text" id="newqty" name="newqty" class="form-control form-control-sm" value="0" required>
-                                </div>
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Unit Price</label>
-                                    <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
-                                </div>
-                            </div>
-                            <div class="form-group mb-1">
-                                <label class="small font-weight-bold text-dark">Comment</label>
-                                <textarea name="comment" id="comment" class="form-control form-control-sm"></textarea>
-                            </div>
-                            <div class="form-group mt-3 text-right">
-                                <button type="button" id="formsubmit" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus"></i>&nbsp;Add to list</button>
-                                <input name="submitBtn" type="submit" value="Save" id="submitBtn" class="d-none">
-                            </div>
-                            <input type="hidden" name="refillprice" id="refillprice" value="">
-                        </form>
+
+                <!-- ================= entry form (landscape grid, full width) ================= -->
+                <form id="createorderform" autocomplete="off">
+                    <div class="erp-form-grid">
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Order Date*</label>
+                            <input type="date" class="form-control form-control-sm" name="orderdate" id="orderdate" value="<?php echo date('Y-m-d') ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Due Date*</label>
+                            <input type="date" class="form-control form-control-sm" name="duedate" id="duedate" value="<?php echo date('Y-m-d') ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Supplier*</label>
+                            <select style="width:100%" class="form-control form-control-sm" name="supplier" id="supplier" required>
+                                <option value="">Select</option>
+                                <?php foreach($supplierlist->result() as $rowsupplierlist){ ?>
+                                <option value="<?php echo $rowsupplierlist->idtbl_supplier ?>"><?php echo $rowsupplierlist->suppliername ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Product*</label>
+                            <select style="width:100%" class="form-control form-control-sm" name="product" id="product" required>
+                                <option value="">Select</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Qty*</label>
+                            <input type="text" id="newqty" name="newqty" class="form-control form-control-sm" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Unit Price</label>
+                            <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="small font-weight-bold text-dark">Comment</label>
+                            <textarea name="comment" id="comment" class="form-control form-control-sm" rows="1"></textarea>
+                        </div>
                     </div>
-                    <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
-                        <table class="table table-striped table-bordered table-sm small" id="tableorder">
+                    <div class="form-group mb-3 text-right">
+                        <button type="button" id="formsubmit" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus"></i>&nbsp;Add to list</button>
+                        <input name="submitBtn" type="submit" value="Save" id="submitBtn" class="d-none">
+                    </div>
+                    <input type="hidden" name="refillprice" id="refillprice" value="">
+                </form>
+
+                <!-- ================= order lines + totals (own card, full width, below the form) ================= -->
+                <div class="card mb-3">
+                    <div class="card-header">Order Items</div>
+                    <div class="card-body p-0 p-2">
+                        <table class="table table-striped table-bordered table-sm small mb-0" id="tableorder">
                             <thead>
                                 <tr>
                                     <th>Product</th>
@@ -135,29 +127,30 @@ include "include/topnavbar.php";
                             </thead>
                             <tbody></tbody>
                         </table>
-                        <div class="row">
-                            <div class="col text-right">
-                                <h1 class="font-weight-600" id="divtotal">Rs. 0.00</h1>
-                            </div>
-                            <input type="hidden" id="hidetotalorder" value="0">
-                        </div>
-                        <hr>
-                        <div class="form-group">
-                            <label class="small font-weight-bold text-dark">Remark</label>
-                            <textarea name="remark" id="remark" class="form-control form-control-sm"></textarea>
-                        </div>
-                        <div class="form-group mt-2">
-                            <button type="button" id="btncreateorder"
-                                class="btn btn-outline-primary btn-sm fa-pull-right"><i
-                                    class="fas fa-save"></i>&nbsp;Create
-                                Order</button>
-                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <span class="text-muted small">Tap a row to remove it</span>
+                        <h5 class="font-weight-700 mb-0" id="divtotal">Rs. 0.00</h5>
                     </div>
                 </div>
+                <input type="hidden" id="hidetotalorder" value="0">
+
+                <div class="erp-form-grid">
+                    <div class="form-group full-width">
+                        <label class="small font-weight-bold text-dark">Remark</label>
+                        <textarea name="remark" id="remark" class="form-control form-control-sm" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="text-right">
+                    <button type="button" id="btncreateorder" class="btn btn-primary btn-sm px-4"><i class="fas fa-save"></i>&nbsp;Create Order</button>
+                </div>
+
 			</div>
 		</div>
 	</div>
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="porderviewmodal" data-backdrop="static" data-keyboard="false" tabindex="-1"
 	aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -198,12 +191,12 @@ include "include/topnavbar.php";
                 [10, 25, 50, 'All'],
             ],
             buttons: [
-                { extend: 'csv', className: 'btn btn-ocean-blue btn-sm', title: 'Purchase Order Information', text: '<i class="fas fa-file-csv mr-2"></i> CSV' },
-                { extend: 'pdf', className: 'btn btn-ocean-blue btn-sm', title: 'Purchase Order Information', text: '<i class="fas fa-file-pdf mr-2"></i> PDF' },
+                { extend: 'csv', className: 'btn btn-sm', title: 'Purchase Order Information', text: '<i class="fas fa-file-csv mr-2"></i> CSV' },
+                { extend: 'pdf', className: 'btn btn-sm', title: 'Purchase Order Information', text: '<i class="fas fa-file-pdf mr-2"></i> PDF' },
                 { 
                     extend: 'print', 
                     title: 'Purchase Order Information',
-                    className: 'btn btn-ocean-blue btn-sm', 
+                    className: 'btn btn-sm', 
                     text: '<i class="fas fa-print mr-2"></i> Print',
                     customize: function (win) {
                         $(win.document.body).find('table')
@@ -212,11 +205,6 @@ include "include/topnavbar.php";
                     }, 
                 },
             ],
-            ajax: {
-                url: "<?php echo base_url() ?>scripts/customerlist.php",
-                type: "POST", // you can use GET
-                // data: function(d) {}
-            },
             ajax: {
                 url: "<?php echo base_url() ?>scripts/purchaseorderlist.php",
                 type: "POST", // you can use GET
@@ -252,8 +240,8 @@ include "include/topnavbar.php";
                     "className": '',
                     "data": null,
                     "render": function(data, type, full) {
-                        if(full['confirmstatus']==1){return '<i class="fas fa-check text-success mr-2"></i>Confirm Order';}
-                        else{return 'Not Confirm Order';}
+                        if(full['confirmstatus']==1){return '<span class="badge badge-success"><i class="fas fa-check mr-1"></i>Confirm Order</span>';}
+                        else{return '<span class="badge badge-warning">Not Confirm Order</span>';}
                     }
                 },
                 {
@@ -261,8 +249,8 @@ include "include/topnavbar.php";
                     "className": '',
                     "data": null,
                     "render": function(data, type, full) {
-                        if(full['grnconfirm']==1){return '<i class="fas fa-check text-success mr-2"></i>Issue GRN';}
-                        else{return 'Not Issue GRN';}
+                        if(full['grnconfirm']==1){return '<span class="badge badge-success"><i class="fas fa-check mr-1"></i>Issue GRN</span>';}
+                        else{return '<span class="badge badge-warning">Not Issue GRN</span>';}
                     }
                 },
                 {
@@ -277,7 +265,7 @@ include "include/topnavbar.php";
                         button+='<button class="btn btn-dark btn-sm btnview mr-1" data-toggle="tooltip" data-placement="bottom" title="View Purchase Order" id="'+full['idtbl_porder']+'"><i class="fas fa-eye"></i></button>';
                         button+='<button class="btn btn-danger btn-sm btnprintpo mr-1" data-toggle="tooltip" data-placement="bottom" title="Print PDF" data-id="'+full['idtbl_porder']+'"><i class="fas fa-file-pdf"></i></button>';
                         if(full['confirmstatus']==1){
-                            button+='<button class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-check-square"></i></button>';
+                            button+='<button class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='" data-toggle="tooltip" title="Confirmed"><i class="fas fa-check-square"></i></button>';
                         }else{
                             button+='<a href="<?php echo base_url() ?>Purchaseorder/Purchaseorderstatus/'+full['idtbl_porder']+'/1" onclick="return active_confirm()" target="_self" data-toggle="tooltip" data-placement="bottom" title="Approve Purchase Order" class="btn btn-warning btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-times-circle"></i></a>';
                         }

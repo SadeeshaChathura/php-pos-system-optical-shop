@@ -17,12 +17,27 @@ function menucheck($arraymenu, $menuID){
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <script>(function(){var t=localStorage.getItem('qp-theme');if(t&&t!=='blue')document.documentElement.setAttribute('data-theme',t);})();</script>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>QuantumPay - By CalciteX</title>
+        <script>
+        (function () {
+            try {
+                var pref = localStorage.getItem('qp-color-mode') || 'system';
+                var resolved = pref === 'system'
+                    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                    : pref;
+                document.documentElement.setAttribute('data-color-mode', resolved);
+                document.documentElement.setAttribute('data-color-mode-pref', pref);
+            } catch (e) {
+                document.documentElement.setAttribute('data-color-mode', 'light');
+            }
+        })();
+        </script>
         <link href="<?php echo base_url() ?>assets/css/styles.css" rel="stylesheet" />
         <link href="<?php echo base_url() ?>assets/css/pos-styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
@@ -41,6 +56,8 @@ function menucheck($arraymenu, $menuID){
         <link rel="stylesheet" href="<?php echo base_url() ?>assets/icofont/icofont.min.css">
         <link rel="stylesheet" href="<?php echo base_url() ?>assets/flaticon/flaticon.css">
         <link href="<?php echo base_url() ?>assets/css/modern-sidebar-topnav.css" rel="stylesheet" />
+        <link href="<?php echo base_url() ?>assets/css/erp-modern.css" rel="stylesheet" />
+        <link href="<?php echo base_url() ?>assets/css/qp-theme-mode.css" rel="stylesheet" />
         <style>
             .table tr {
                 cursor: pointer;

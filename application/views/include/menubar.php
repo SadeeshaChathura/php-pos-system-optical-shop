@@ -136,6 +136,15 @@ function checkprivilege($arraymenu, $menuID, $type){
 <textarea class="d-none" id="actiontext"><?php if($this->session->flashdata('msg')) {echo $this->session->flashdata('msg');} ?></textarea>
 
 <nav class="sidenav shadow-right sidenav-light">
+    <div class="sidenav-brand">
+        <div>
+            <img src="<?php echo base_url('images/QPlogo.png'); ?>">
+        </div>
+        <div class="sidenav-brand-text-full">
+            <span class="sidenav-brand-name">Quantum<span class="sidenav-brand-name-accent">Pay</span></span>
+            <span class="sidenav-brand-tag">ERP</span>
+        </div>
+    </div>
     <div class="sidenav-menu">
         <div class="nav accordion" id="accordionSidenav">
 

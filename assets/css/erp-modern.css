@@ -1,0 +1,780 @@
+/* =====================================================================
+   ERP MODERN THEME — override layer
+   Load this AFTER styles.css / style.css / pos-styles.css so it wins.
+   <link href="<?php echo base_url() ?>assets/css/erp-modern.css" rel="stylesheet" />
+   ===================================================================== */
+
+:root{
+  --erp-bg:            #f4f6f9;
+  --erp-surface:       #ffffff;
+  --erp-border:        #e5e9f0;
+  --erp-text:          #2b3445;
+  --erp-text-muted:    #7c879b;
+  --erp-primary:       #3f6df0;
+  --erp-primary-dark:  #2f57c9;
+  --erp-primary-soft:  #eaf0ff;
+  --erp-accent:        #17b6a7;
+  --erp-danger:        #e5484d;
+  --erp-warning:       #f0a03d;
+  --erp-success:       #17a673;
+  --erp-radius:        0.6rem;
+  --erp-radius-sm:     0.4rem;
+  --erp-shadow:        0 2px 10px rgba(30, 41, 59, 0.06);
+  --erp-shadow-md:     0 8px 24px rgba(30, 41, 59, 0.09);
+  --erp-font:          "Inter","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+}
+
+/* ---------------------------------------------------------------------
+   BASE
+--------------------------------------------------------------------- */
+body{
+  background-color: var(--erp-bg) !important;
+  color: var(--erp-text) !important;
+  font-family: var(--erp-font) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------------
+   PAGE HEADER  (kills the teal/uppercase/3D-shadow look)
+--------------------------------------------------------------------- */
+.page-header{
+  background-color: var(--erp-surface) !important;
+  border: 1px solid var(--erp-border);
+  border-radius: var(--erp-radius) !important;
+  box-shadow: var(--erp-shadow);
+  text-transform: none !important;
+  font-weight: 400 !important;
+  margin-top: 1.25rem !important;
+}
+.page-header .page-header-content{
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+  text-shadow: none !important;
+}
+.page-header .page-header-title{
+  color: var(--erp-text) !important;
+  font-size: 1.35rem !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+}
+.page-header .page-header-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: var(--erp-primary-soft);
+  color: var(--erp-primary);
+  margin-right: 0.75rem;
+}
+.page-header .page-header-icon i,
+.page-header .page-header-icon svg,
+.page-header .page-header-icon [data-feather]{
+  width: 1.15rem;
+  height: 1.15rem;
+}
+.page-header .page-header-subtitle{
+  color: var(--erp-text-muted) !important;
+}
+
+/* ---------------------------------------------------------------------
+   SIDENAV — flat, no gradient / glow / uppercase
+--------------------------------------------------------------------- */
+.sidenav{
+  background: #1b2436 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.sidenav::before{ display:none !important; }
+.sidenav a, .sidenav span, .sidenav h1, .sidenav h2, .sidenav h3, .sidenav p{
+  text-shadow: none !important;
+  font-weight: 500 !important;
+}
+.sidenav-light,
+.sidenav-light .sidenav-menu .nav-link,
+.sidenav-light .sidenav-menu .nav-link .nav-link-icon{
+  color: rgba(255,255,255,0.65) !important;
+  text-transform: none !important;
+  text-shadow: none !important;
+}
+.sidenav-light .sidenav-menu .sidenav-menu-heading{
+  color: rgba(255,255,255,0.35) !important;
+  text-shadow: none !important;
+}
+.sidenav-light .sidenav-menu .nav-link{
+  border-radius: var(--erp-radius-sm);
+  margin: 0.1rem 0.6rem;
+  padding-left: 0.75rem !important;
+}
+.sidenav-light .sidenav-menu .nav-link:hover{
+  background-color: rgba(255,255,255,0.06) !important;
+  color: #fff !important;
+}
+.sidenav-light .sidenav-menu .nav-link.active{
+  background-color: var(--erp-primary) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+.sidenav-light .sidenav-menu .nav-link.active .nav-link-icon{
+  color: #fff !important;
+}
+.sidenav .sidenav-footer .sidenav-footer-subtitle{
+  text-shadow: none !important;
+}
+
+/* Top navbar */
+.topnav{
+  background: var(--erp-surface) !important;
+  border-bottom: 1px solid var(--erp-border);
+}
+.topnav .navbar-brand{ color: var(--erp-text) !important; }
+.topnav.navbar-light #sidebarToggle{ color: var(--erp-text) !important; }
+
+/* ---------------------------------------------------------------------
+   CARDS
+--------------------------------------------------------------------- */
+.card{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius) !important;
+  box-shadow: var(--erp-shadow) !important;
+}
+.card .card-header{
+  background-color: var(--erp-surface);
+  border-bottom: 1px solid var(--erp-border);
+  color: var(--erp-text) !important;
+  font-weight: 600;
+}
+.title-style span{ background-color: var(--erp-surface); }
+
+/* ---------------------------------------------------------------------
+   FORMS
+--------------------------------------------------------------------- */
+label.small.font-weight-bold,
+label.font-weight-bold{
+  color: var(--erp-text-muted) !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.3rem !important;
+}
+.form-control,
+.custom-select,
+.select2-container--default .select2-selection--single{
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius-sm) !important;
+  background-color: #fbfcfe !important;
+}
+.form-control:focus,
+.custom-select:focus{
+  border-color: var(--erp-primary) !important;
+  box-shadow: 0 0 0 0.15rem rgba(63,109,240,0.15) !important;
+  background-color: #fff !important;
+}
+.form-control[readonly]{ background-color: var(--erp-bg) !important; }
+
+/* ---------------------------------------------------------------------
+   BUTTONS — flatten
+--------------------------------------------------------------------- */
+.btn{ border-radius: var(--erp-radius-sm) !important; font-weight: 500; }
+.btn-primary,
+#submitBtn{
+  background-color: var(--erp-primary) !important;
+  border-color: var(--erp-primary) !important;
+}
+.btn-primary:hover, #submitBtn:hover{
+  background-color: var(--erp-primary-dark) !important;
+  border-color: var(--erp-primary-dark) !important;
+}
+.btn-ocean-blue{
+  background-color: var(--erp-surface) !important;
+  border: 1px solid var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+.btn-ocean-blue:hover{
+  background-color: var(--erp-primary-soft) !important;
+  color: var(--erp-primary) !important;
+}
+.btn-outline-primary{
+  color: var(--erp-primary) !important;
+  border-color: var(--erp-primary) !important;
+}
+.btn-outline-primary:hover{
+  background-color: var(--erp-primary) !important;
+}
+
+/* ---------------------------------------------------------------------
+   DATATABLES
+--------------------------------------------------------------------- */
+.card .table thead,
+.card .table thead.table-warning{
+  background-color: var(--erp-primary) !important;
+  color: #fff !important;
+}
+.card .table thead th{
+  border-bottom: none !important;
+  border-top: none !important;
+  color: #fff !important;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700 !important;
+  white-space: nowrap;
+}
+/* DataTables sort arrows need to read against the colored header */
+.card .datatable table.dataTable thead .sorting [data-fa-pseudo-element=":after"],
+.card table.dataTable thead .sorting [data-fa-pseudo-element=":after"]{
+  color: rgba(255,255,255,0.55) !important;
+}
+.card .datatable table.dataTable thead .sorting_asc [data-fa-pseudo-element=":after"],
+.card .datatable table.dataTable thead .sorting_desc [data-fa-pseudo-element=":after"],
+.card table.dataTable thead .sorting_asc [data-fa-pseudo-element=":after"],
+.card table.dataTable thead .sorting_desc [data-fa-pseudo-element=":after"]{
+  color: #fff !important;
+}
+.table-bordered,
+.table-bordered th,
+.table-bordered td{
+  border-color: var(--erp-border) !important;
+}
+.table-striped tbody tr:nth-of-type(odd){
+  background-color: #f8fafc !important;
+}
+.table tbody tr:hover{
+  background-color: var(--erp-primary-soft) !important;
+}
+.dataTables_filter input,
+.dataTables_length select{
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius-sm) !important;
+  background-color: #fff !important;
+  color: var(--erp-text) !important;
+}
+.dataTables_paginate .pagination .page-item.active .page-link{
+  background-color: var(--erp-primary) !important;
+  border-color: var(--erp-primary) !important;
+}
+.dataTables_paginate .pagination .page-link{
+  color: var(--erp-primary) !important;
+  border-radius: var(--erp-radius-sm);
+  margin: 0 2px;
+  border-color: var(--erp-border) !important;
+}
+.dataTables_paginate .pagination .page-link:hover{
+  background-color: var(--erp-primary-soft) !important;
+}
+
+/* Export toolbar buttons — distinct colors per action, like a typical
+   modern DataTables toolbar (CSV green, PDF red, Print purple) */
+.dt-buttons .buttons-csv.btn,
+.dt-buttons .buttons-csv.btn:hover{
+  background-color: var(--erp-success) !important;
+  border-color: var(--erp-success) !important;
+  color: #fff !important;
+}
+.dt-buttons .buttons-pdf.btn,
+.dt-buttons .buttons-pdf.btn:hover{
+  background-color: var(--erp-danger) !important;
+  border-color: var(--erp-danger) !important;
+  color: #fff !important;
+}
+.dt-buttons .buttons-print.btn,
+.dt-buttons .buttons-print.btn:hover{
+  background-color: #7c3aed !important;
+  border-color: #7c3aed !important;
+  color: #fff !important;
+}
+
+/* Row action buttons — compact circular icon buttons instead of
+   full labeled/padded buttons (edit / approve / deactivate / delete) */
+.card .table td .btn,
+.card .table td a.btn{
+  width: 2rem !important;
+  height: 2rem !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+.card .table td .btn i,
+.card .table td a.btn i{
+  margin: 0 !important;
+}
+
+/* ---------------------------------------------------------------------
+   MODALS
+--------------------------------------------------------------------- */
+.modal-content{
+  border: none !important;
+  border-radius: var(--erp-radius) !important;
+  box-shadow: var(--erp-shadow-md) !important;
+}
+.modal-header{
+  border-bottom: 1px solid var(--erp-border);
+  padding: 1rem 1.25rem;
+}
+.modal-header .modal-title{
+  font-weight: 600;
+  color: var(--erp-text);
+}
+.modal-footer{
+  border-top: 1px solid var(--erp-border);
+}
+
+/* Badges → soft pill style */
+.badge{ border-radius: 999px !important; font-weight: 600; padding: 0.35em 0.7em; }
+.badge-success{ background-color: #e3f7ee !important; color: var(--erp-success) !important; }
+.badge-warning{ background-color: #fdf1e2 !important; color: var(--erp-warning) !important; }
+.badge-primary{ background-color: var(--erp-primary-soft) !important; color: var(--erp-primary) !important; }
+
+/* =====================================================================
+   LAYOUT UTILITIES — form/table stacking
+   Use these instead of the old col-5 / col-7 (or col-lg-4 / col-lg-8)
+   split so a "form left, table right" layout becomes
+   "form card on top, datatable card below" (two full-width rows).
+
+   BEFORE (old pattern seen in Customer.php etc.):
+     <div class="row">
+       <div class="col-5"> ...form... </div>
+       <div class="col-7"> ...table... </div>
+     </div>
+
+   AFTER:
+     <div class="row erp-stack-row">
+       <div class="erp-panel-form"> ...form... </div>
+       <div class="erp-panel-table"> ...table... </div>
+     </div>
+
+   That's the only HTML change required per page.
+   ===================================================================== */
+.erp-stack-row{
+  flex-direction: column !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.erp-panel-form,
+.erp-panel-table{
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+/* each panel should wrap its content in its own .card — this just
+   handles the spacing between the two stacked cards */
+.erp-panel-form .card{ margin-bottom: 1.25rem; }
+.erp-panel-table .card{ margin-bottom: 0; }
+
+/* Optional: cap the datatable panel height so long tables scroll politely */
+.erp-panel-table .scrollbar{ max-height: none; }
+
+/* =====================================================================
+   LANDSCAPE FORM GRID — wide, multi-column form layout (see screenshot
+   reference: business/delivery address side by side, full page width)
+   Wrap the form's fields directly (no .form-row/.col nesting needed):
+
+     <div class="erp-form-grid">
+       <div class="form-group"><label>...</label><input ...></div>
+       <div class="form-group"><label>...</label><input ...></div>
+       ...
+     </div>
+
+   Add class="full-width" to a .form-group that should span the whole row
+   (e.g. a long address textarea or the submit button row).
+   ===================================================================== */
+.erp-form-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem 1.5rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+.erp-form-grid .form-group{
+  margin-bottom: 0;
+}
+.erp-form-grid .full-width{
+  grid-column: 1 / -1;
+}
+.erp-form-grid-title{
+  grid-column: 1 / -1;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--erp-text);
+  border-bottom: 1px solid var(--erp-border);
+  padding-bottom: 0.5rem;
+  margin: 0.25rem 0 0.25rem;
+}
+
+@media (min-width: 992px){
+  /* Legacy .form-row markup (older pages) gets the same fluid treatment
+     without requiring a rewrite to .erp-form-grid */
+  .erp-panel-form .form-row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+  }
+  .erp-panel-form .form-row > [class*="col"]{
+    flex: 1 1 220px;
+  }
+}
+
+/* =====================================================================
+   TOPNAV — logo, clock badge, sidebar toggle, user dropdown
+   ===================================================================== */
+.topnav{
+  height: 4rem !important;
+  padding-left: 1rem;
+  padding-right: 1.25rem;
+}
+.topnav .navbar-brand{
+  width: auto !important;
+  padding: 0 !important;
+}
+.topnav .navbar-brand-logo{
+  width: auto !important;
+  height: 2rem !important;
+  max-height: 2rem;
+}
+
+/* sidebar toggle button */
+.topnav #sidebarToggle{
+  background-color: var(--erp-bg) !important;
+  color: var(--erp-text) !important;
+  border-radius: var(--erp-radius-sm) !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+}
+.topnav #sidebarToggle:hover{
+  background-color: var(--erp-primary-soft) !important;
+  color: var(--erp-primary) !important;
+}
+.topnav #sidebarToggle i, .topnav #sidebarToggle svg{
+  width: 1.1rem;
+  height: 1.1rem;
+  transition: transform 0.25s ease-in-out;
+}
+
+/* live clock pill */
+.qp-clock-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  background-color: var(--erp-bg);
+  border: 1px solid var(--erp-border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--erp-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.qp-clock-badge i, .qp-clock-badge svg{
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--erp-primary);
+}
+
+/* user avatar trigger */
+.qp-user-trigger{
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 2px solid var(--erp-border) !important;
+  overflow: hidden;
+  background: var(--erp-surface) !important;
+  transition: border-color 0.15s ease-in-out;
+}
+.qp-user-trigger:hover{
+  border-color: var(--erp-primary) !important;
+}
+.qp-user-trigger img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* user dropdown panel */
+.dropdown-user .dropdown-menu{
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius) !important;
+  box-shadow: var(--erp-shadow-md) !important;
+  padding-bottom: 0.4rem;
+  min-width: 15rem;
+}
+.dropdown-user .dropdown-menu .dropdown-header{
+  background-color: var(--erp-bg);
+  border-radius: var(--erp-radius) var(--erp-radius) 0 0;
+  padding: 1rem 1.1rem;
+}
+.dropdown-user .dropdown-menu .dropdown-header .dropdown-user-img{
+  height: 2.75rem;
+  width: 2.75rem;
+  border: 2px solid var(--erp-surface);
+  box-shadow: 0 0 0 1px var(--erp-border);
+}
+.dropdown-user .dropdown-menu .dropdown-header .dropdown-user-details-name{
+  color: var(--erp-text) !important;
+  font-weight: 700;
+}
+.dropdown-user .dropdown-menu .dropdown-header .dropdown-user-details-email{
+  color: var(--erp-text-muted) !important;
+}
+.dropdown-user .dropdown-menu .dropdown-item{
+  padding: 0.65rem 1.1rem;
+  font-weight: 500;
+  color: var(--erp-text);
+}
+.dropdown-user .dropdown-menu .dropdown-item .dropdown-item-icon{
+  color: var(--erp-text-muted);
+}
+.dropdown-user .dropdown-menu .dropdown-item:hover{
+  background-color: var(--erp-primary-soft);
+  color: var(--erp-primary);
+}
+.dropdown-user .dropdown-menu .dropdown-item:hover .dropdown-item-icon{
+  color: var(--erp-primary);
+}
+
+/* =====================================================================
+   COLOR THEMES — swap the whole app's accent color via data-theme
+   Applied on <html data-theme="..."> (see JS snippet in topnavbar.php)
+   ===================================================================== */
+:root[data-theme="indigo"]{
+  --erp-primary:      #6355f0;
+  --erp-primary-dark: #4d3fd6;
+  --erp-primary-soft: #eeecfe;
+  --erp-accent:       #6355f0;
+}
+:root[data-theme="teal"]{
+  --erp-primary:      #0d9488;
+  --erp-primary-dark: #0b7d73;
+  --erp-primary-soft: #e3f7f4;
+  --erp-accent:       #0d9488;
+}
+:root[data-theme="rose"]{
+  --erp-primary:      #e11d67;
+  --erp-primary-dark: #c11256;
+  --erp-primary-soft: #fde7f0;
+  --erp-accent:       #e11d67;
+}
+:root[data-theme="amber"]{
+  --erp-primary:      #d97706;
+  --erp-primary-dark: #b45f04;
+  --erp-primary-soft: #fdf0dd;
+  --erp-accent:       #d97706;
+}
+
+/* theme-switch trigger + swatch dropdown */
+.qp-theme-trigger i, .qp-theme-trigger svg{ color: var(--erp-primary); }
+.qp-theme-menu{
+  min-width: 13rem;
+  padding: 0.75rem;
+}
+.qp-theme-menu-title{
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--erp-text-muted);
+  padding: 0 0.25rem 0.5rem;
+}
+.qp-theme-swatches{
+  display: flex;
+  gap: 0.6rem;
+  padding: 0 0.25rem;
+}
+.qp-theme-swatch{
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  border: 2px solid var(--erp-surface);
+  box-shadow: 0 0 0 1.5px var(--erp-border);
+  cursor: pointer;
+  padding: 0;
+}
+.qp-theme-swatch.active{
+  box-shadow: 0 0 0 2px var(--swatch-color, var(--erp-primary));
+}
+.qp-theme-swatch[data-theme-value="blue"]{ background: #3f6df0; }
+.qp-theme-swatch[data-theme-value="indigo"]{ background: #6355f0; }
+.qp-theme-swatch[data-theme-value="teal"]{ background: #0d9488; }
+.qp-theme-swatch[data-theme-value="rose"]{ background: #e11d67; }
+.qp-theme-swatch[data-theme-value="amber"]{ background: #d97706; }
+
+/* =====================================================================
+   NOTIFICATIONS
+   ===================================================================== */
+.qp-notif-trigger{ position: relative; }
+.qp-notif-badge{
+  position: absolute;
+  top: 0.1rem;
+  right: 0.1rem;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--erp-danger);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.05rem;
+  text-align: center;
+  border: 2px solid var(--erp-surface);
+}
+.dropdown-notifications .dropdown-menu{
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius) !important;
+  box-shadow: var(--erp-shadow-md) !important;
+}
+.dropdown-notifications .dropdown-notifications-header{
+  background-color: var(--erp-surface) !important;
+  color: var(--erp-text) !important;
+  border-bottom: 1px solid var(--erp-border);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+.dropdown-notifications .dropdown-notifications-item{
+  border-bottom: 1px solid var(--erp-border) !important;
+}
+.dropdown-notifications .dropdown-notifications-item:hover{
+  background-color: var(--erp-primary-soft);
+}
+.dropdown-notifications .dropdown-notifications-item-icon{
+  background-color: var(--erp-primary-soft) !important;
+}
+.dropdown-notifications .dropdown-notifications-item-icon svg,
+.dropdown-notifications .dropdown-notifications-item-icon i{
+  color: var(--erp-primary) !important;
+}
+.dropdown-notifications .dropdown-notifications-footer{
+  color: var(--erp-primary) !important;
+  font-weight: 600;
+}
+
+/* =====================================================================
+   SIDENAV BRAND HEADER + initials avatar
+   ===================================================================== */
+.sidenav-brand{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1.25rem 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+/* icon mark — stays visible whether the sidebar is expanded or collapsed */
+.sidenav-brand-mark{
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.6rem;
+  background: var(--erp-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+
+/* wordmark — hidden once the sidebar is collapsed */
+.sidenav-brand-text-full{
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.sidenav-brand-name{
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+}
+.sidenav-brand-name-accent{
+  color: var(--erp-accent, #17b6a7);
+}
+.sidenav-brand-tag{
+  color: rgba(255,255,255,0.55);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+/* collapsed / icon-only sidebar (the toggle actually applies this class) */
+.sidenav-toggled .sidenav-brand{
+  padding: 1.25rem 0;
+  gap: 0;
+}
+.sidenav-toggled .sidenav-brand-text-full{
+  display: none;
+}
+
+.qp-avatar-initials{
+  width: 2.3rem;
+  height: 2.3rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--erp-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+}
+
+/* =====================================================================
+   TOPNAV — "Welcome, {Company}" block (left side)
+   ===================================================================== */
+.qp-welcome{
+  line-height: 1.2;
+  margin-left: 0.25rem;
+}
+.qp-welcome-label{
+  display: block;
+  font-size: 0.7rem;
+  color: var(--erp-text-muted);
+  font-weight: 500;
+}
+.qp-welcome-company{
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--erp-text);
+}
+
+/* =====================================================================
+   NAVBAR SIDEBAR TOGGLE — single button, rotating chevron animation
+   ===================================================================== */
+.sidenav-toggled .topnav #sidebarToggle i,
+.sidenav-toggled .topnav #sidebarToggle svg{
+  transform: rotate(180deg);
+}
+.qp-sidenav-toggle i, .qp-sidenav-toggle svg{
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.25s ease-in-out;
+}
+/* flip the arrow when the sidebar is collapsed */
+.sidenav-toggled .qp-sidenav-toggle i,
+.sidenav-toggled .qp-sidenav-toggle svg{
+  transform: rotate(180deg);
+}
+.sidenav-toggled .qp-sidenav-toggle{
+  right: 0.35rem;
+}

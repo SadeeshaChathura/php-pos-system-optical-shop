@@ -1,16 +1,7 @@
 <?php 
 include "include/header.php"; 
-
 include "include/topnavbar.php"; 
 ?>
-
-<style>
-    content-display {
-        display: none;
-    }
-</style>
-
-
 <div id="layoutSidenav">
     <div id="layoutSidenav_nav">
         <?php include "include/menubar.php"; ?>
@@ -20,42 +11,34 @@ include "include/topnavbar.php";
             <div class="page-header shadow">
                 <div class="container-fluid">
                     <div class="page-header-content py-3">
-                        <div class="row">
-                            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                                <h1 class="page-header-title">
-                                    <div class="page-header-icon"><i class="fas fa-cart-arrow-down"></i></div>
-                                    <span>Item Stock Info</span>
-                                </h1>
-                            </div>
-                        </div>
+                        <h1 class="page-header-title">
+                            <div class="page-header-icon"><i class="fas fa-cart-arrow-down"></i></div>
+                            <span>Item Stock Info</span>
+                        </h1>
                     </div>
                 </div>
             </div>
             <div class="container-fluid mt-2 p-0 p-2">
                 <div class="card">
-                    <div class="card-body">
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="scrollbar pb-3" id="style-2">
-                                    <table class="table table-striped table-bordered table-sm nowrap" id="matstockTable"
-                                        style="width:100%">
-                                        <thead class="table-warning">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>MATERIAL NAME</th>
-                                                <th>MATERIAL CODE</th>
-                                                <th>QUANTITY</th>
-                                                <th>COST PRICE</th>
-                                                <th>SALE PRICE</th>
-                                                <th>AMOUNT</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                    <div class="card-header">Stock Summary</div>
+                    <div class="card-body p-0 p-2">
+                        <div class="scrollbar pb-3" id="style-2">
+                            <table class="table table-striped table-bordered table-sm nowrap" id="matstockTable"
+                                style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>MATERIAL NAME</th>
+                                        <th>MATERIAL CODE</th>
+                                        <th>QUANTITY</th>
+                                        <th>COST PRICE</th>
+                                        <th>SALE PRICE</th>
+                                        <th>AMOUNT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -137,15 +120,6 @@ include "include/topnavbar.php";
                     footer: true,
                     title: 'Kannadiya Pvt Ltd',
                     messageTop: 'Stock Report'
-                },
-                {
-                    extend: 'excel',
-                    className: 'btn btn-ocean-blue btn-sm',
-                    filename: 'Material Stock Report' + today,
-                    text: '<i class="fas fa-file-excel mr-2"></i> EXCEL',
-                    footer: true,
-                    title: 'Kannadiya Pvt Ltd',
-                    messageTop: 'Material Stock Report'
                 },
                 {
                     extend: 'pdf',

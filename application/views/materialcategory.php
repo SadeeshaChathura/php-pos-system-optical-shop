@@ -19,35 +19,60 @@ include "include/topnavbar.php";
                 </div>
             </div>
             <div class="container-fluid mt-2 p-0 p-2">
-                <div class="card">
-                    <div class="card-body p-0 p-2">
-                        <div class="row">
-                            <div class="col-3">
+                <div class="row erp-stack-row">
+
+                    <!-- ================= FORM CARD (top, full width, landscape) ================= -->
+                    <div class="erp-panel-form w-100">
+                        <div class="card">
+                            <div class="card-header">Category Details</div>
+                            <div class="card-body">
                                 <form action="<?php echo base_url() ?>Materialcategory/Materialcategoryinsertupdate" method="post" autocomplete="off">
-                                    <div class="form-group mb-1">
-                                        <label class="small font-weight-bold">Item Category*</label>
-                                        <input type="text" class="form-control form-control-sm" name="category" id="category" required>
+
+                                    <div class="erp-form-grid">
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Item Category*</label>
+                                            <input type="text" class="form-control form-control-sm" name="category" id="category" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Category Code</label>
+                                            <input type="text" class="form-control form-control-sm" name="code" id="code" readonly>
+                                        </div>
                                     </div>
+
                                     <div class="form-group mt-2 text-right">
-                                        <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="far fa-save"></i>&nbsp;Add</button>
+                                        <button type="button" id="resetBtn" class="btn btn-secondary btn-sm px-4 mr-2">
+                                            <i class="fas fa-undo"></i>&nbsp;Reset
+                                        </button>
+                                        <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4"
+                                            <?php if($addcheck==0){echo 'disabled';} ?>><i class="far fa-save"></i>&nbsp;Add</button>
                                     </div>
                                     <input type="hidden" name="recordOption" id="recordOption" value="1">
                                     <input type="hidden" name="recordID" id="recordID" value="">
                                 </form>
                             </div>
-                            <div class="col-9">
-                                <table class="table table-bordered table-striped table-sm nowrap" id="dataTable">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Material Category</th>
-                                            <th class="text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                        </div>
+                    </div>
+
+                    <!-- ================= TABLE CARD (bottom, full width) ================= -->
+                    <div class="erp-panel-table w-100">
+                        <div class="card">
+                            <div class="card-header">Category List</div>
+                            <div class="card-body p-0 p-2">
+                                <div class="scrollbar pb-3" id="style-2">
+                                    <table class="table table-bordered table-striped table-sm nowrap" id="dataTable">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Material Category</th>
+                                                <th class="text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </main>
@@ -61,6 +86,8 @@ include "include/topnavbar.php";
         var editcheck='<?php echo $editcheck; ?>';
         var statuscheck='<?php echo $statuscheck; ?>';
         var deletecheck='<?php echo $deletecheck; ?>';
+
+        loadNextCode();
 
         $('#dataTable').DataTable({
             "destroy": true,
@@ -90,11 +117,6 @@ include "include/topnavbar.php";
                 },
             ],
             ajax: {
-                url: "<?php echo base_url() ?>scripts/customerlist.php",
-                type: "POST", // you can use GET
-                // data: function(d) {}
-            },
-            ajax: {
                 url: "<?php echo base_url() ?>scripts/materialcategorylist.php",
                 type: "POST", // you can use GET
                 // data: function(d) {}
@@ -113,13 +135,13 @@ include "include/topnavbar.php";
                     "data": null,
                     "render": function(data, type, full) {
                         var button='';
-                        button+='<button class="btn btn-primary btn-sm btnEdit mr-1 ';if(editcheck!=1){button+='d-none';}button+='" id="'+full['idtbl_material_category']+'"><i class="fas fa-edit"></i></button>';
+                        button+='<button class="btn btn-primary btn-sm btnEdit mr-1 ';if(editcheck!=1){button+='d-none';}button+='" id="'+full['idtbl_material_category']+'" data-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></button>';
                         if(full['status']==1){
-                            button+='<a href="<?php echo base_url() ?>Materialcategory/Materialcategorystatus/'+full['idtbl_material_category']+'/2" onclick="return deactive_confirm()" target="_self" class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-check-square"></i></a>';
+                            button+='<a href="<?php echo base_url() ?>Materialcategory/Materialcategorystatus/'+full['idtbl_material_category']+'/2" onclick="return deactive_confirm()" target="_self" class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='" data-toggle="tooltip" title="Deactivate"><i class="fas fa-check-square"></i></a>';
                         }else{
-                            button+='<a href="<?php echo base_url() ?>Materialcategory/Materialcategorystatus/'+full['idtbl_material_category']+'/1" onclick="return active_confirm()" target="_self" class="btn btn-warning btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-times-circle"></i></a>';
+                            button+='<a href="<?php echo base_url() ?>Materialcategory/Materialcategorystatus/'+full['idtbl_material_category']+'/1" onclick="return active_confirm()" target="_self" class="btn btn-warning btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='" data-toggle="tooltip" title="Activate"><i class="fas fa-times-circle"></i></a>';
                         }
-                        button+='<a href="<?php echo base_url() ?>Materialcategory/Materialcategorystatus/'+full['idtbl_material_category']+'/3" onclick="return delete_confirm()" target="_self" class="btn btn-danger btn-sm ';if(deletecheck!=1){button+='d-none';}button+='"><i class="fas fa-trash-alt"></i></a>';
+                        button+='<a href="<?php echo base_url() ?>Materialcategory/Materialcategorystatus/'+full['idtbl_material_category']+'/3" onclick="return delete_confirm()" target="_self" class="btn btn-danger btn-sm ';if(deletecheck!=1){button+='d-none';}button+='" data-toggle="tooltip" title="Delete"><i class="fas fa-trash-alt"></i></a>';
                         
                         return button;
                     }
@@ -129,6 +151,7 @@ include "include/topnavbar.php";
                 $('[data-toggle="tooltip"]').tooltip();
             }
         });
+
         $('#dataTable tbody').on('click', '.btnEdit', function() {
             var r = confirm("Are you sure, You want to Edit this ? ");
             if (r == true) {
@@ -151,7 +174,30 @@ include "include/topnavbar.php";
                 });
             }
         });
+
+        $('#resetBtn').on('click', function() {
+            resetForm();
+        });
     });
+
+    function resetForm() {
+        $('#recordID').val('');
+        $('#recordOption').val('1');
+        $('#category').val('');
+        $('#code').val('');
+        $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Add');
+    }
+
+    function loadNextCode() {
+        $.ajax({
+            type: "POST",
+            url: '<?php echo base_url() ?>Materialcategory/Materialcategorygeneratecode',
+            success: function(result) {
+                var obj = JSON.parse(result);
+                $('#code').val(obj.code);
+            }
+        });
+    }
 
     function deactive_confirm() {
         return confirm("Are you sure you want to deactive this?");

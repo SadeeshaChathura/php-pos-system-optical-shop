@@ -20,35 +20,29 @@ include "include/topnavbar.php";
             </div>
             <div class="container-fluid mt-2 p-0 p-2">
                 <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <span>Good Receive Notes</span>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus mr-2"></i>Create Good Receive Note</button>
+                    </div>
                     <div class="card-body p-0 p-2">
-                        <div class="row">
-                            <div class="col-12 text-right">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus mr-2"></i>Create Good Receive Note</button>
-                                <hr>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="scrollbar pb-3" id="style-2">
-                                    <table class="table table-bordered table-striped table-sm nowrap" id="dataTable">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>GRN Number</th>
-                                                <th>PO Number</th>
-                                                <th>Date</th>
-                                                <th>Batch No</th>
-                                                <th>Supplier</th>
-                                                <th>Invoice No</th>
-                                                <th>Dispatch No</th>
-                                                <th>Total</th>
-                                                <th>Approved Status</th>
-                                                <th class="text-right">Actions</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                            </div>
+                        <div class="scrollbar pb-3" id="style-2">
+                            <table class="table table-bordered table-striped table-sm nowrap" id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>GRN Number</th>
+                                        <th>PO Number</th>
+                                        <th>Date</th>
+                                        <th>Batch No</th>
+                                        <th>Supplier</th>
+                                        <th>Invoice No</th>
+                                        <th>Dispatch No</th>
+                                        <th>Total</th>
+                                        <th>Approved Status</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -57,6 +51,7 @@ include "include/topnavbar.php";
         <?php include "include/footerbar.php"; ?>
     </div>
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
 	aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -69,134 +64,125 @@ include "include/topnavbar.php";
 				</button>
 			</div>
 			<div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
-                        <form id="createorderform" autocomplete="off">
-                            <div class="form-row mb-1">
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Order Date*</label>
-                                    <input type="date" class="form-control form-control-sm" placeholder="" name="grndate" id="grndate" value="<?php echo date('Y-m-d') ?>" required>
-                                </div>
-                                <div class="col">
-                                <label class="small font-weight-bold text-dark">Purchase Order</label>
-                                    <select class="form-control form-control-sm" name="porder" id="porder">
-                                        <option value="">Select</option>
-                                        <?php foreach($porderlist->result() as $rowporderlist){ ?>
-                                        <option value="<?php echo $rowporderlist->idtbl_porder; ?>">
-                                            <?php echo 'KND/PO-' . str_pad($rowporderlist->idtbl_porder, 6, '0', STR_PAD_LEFT); ?>
-                                        </option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-row mb-1">
-                                <div class="col-12">
-                                <label class="small font-weight-bold text-dark">Supplier*</label>
-                                    <select style="width:100%" class="form-control form-control-sm" name="supplier" id="supplier" required>
-                                        <option value="">Select</option>
-                                        <?php foreach($supplierlist->result() as $rowsupplierlist){ ?>
-                                        <option value="<?php echo $rowsupplierlist->idtbl_supplier ?>"><?php echo $rowsupplierlist->suppliername ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-row mb-1">
-                            <div class="col">
-                                <label class="small font-weight-bold text-dark">Product*</label>
-                                    <select style="width:100%" class="form-control form-control-sm" name="product" id="product" required>
-                                        <option value="">Select</option>
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Qty*</label>
-                                    <input type="text" id="newqty" name="newqty" class="form-control form-control-sm" required>
-                                </div>
-                            </div>
-                            <div class="form-row mb-1">
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Unit Price</label>
-                                    
-                                    <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
-                                    <input type="hidden" id="refillprice" value="">
 
-                                    <small id="lastgrnpricehint" class="text-muted">
-                                        Last GRN cost will appear here after selecting product
-                                    </small>
-                                </div>
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Sale Price</label>
-                                    <input type="text" id="saleprice" name="saleprice" class="form-control form-control-sm" value="0">
-                                </div>
-                            </div>
-                            <div class="form-group mb-1">
-                                <label class="small font-weight-bold text-dark">Comment</label>
-                                <textarea name="comment" id="comment" class="form-control form-control-sm"></textarea>
-                            </div>
-                            <div class="form-group mb-1">
-                                <label class="small font-weight-bold text-dark">Batch No</label>
-                                <input type="text" id="batchno" name="batchno" class="form-control form-control-sm" readonly>
-                            </div>
-                            <div class="form-row mb-1">
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Invoice No</label>
-                                    <input type="text" id="invoice" name="invoice" class="form-control form-control-sm">
-                                </div>
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Dispatch No</label>
-                                    <input type="text" id="dispatch" name="dispatch" class="form-control form-control-sm">
-                                </div>
-                            </div>
-                            <div class="form-group mt-3 text-right">
-                                <button type="button" id="formsubmit" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus"></i>&nbsp;Add to list</button>
-                                <input name="submitBtn" type="submit" value="Save" id="submitBtn" class="d-none">
-                            </div>
-                            <input type="hidden" name="refillprice" id="refillprice" value="">
-                        </form>
-                    </div>
-                    <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
-                        <div class="scrollbar pb-3" id="style-3">
-                            <table class="table table-striped table-bordered table-sm small" id="tableorder">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Comment</th>
-                                        <th class="d-none">Quater</th>
-                                        <th class="d-none">ProductID</th>
-                                        <th class="d-none">Unitprice</th>
-                                        <th>Unitprice</th>
-                                        <th class="d-none">Saleprice</th>
-                                        <th>Saleprice</th>
-                                        <th class="text-center">Qty</th>
-                                        <th class="d-none">HideTotal</th>
-                                        <th class="text-right">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <div class="col text-right">
-                                <h1 class="font-weight-600" id="divtotal">Rs. 0.00</h1>
-                            </div>
-                            <input type="hidden" id="hidetotalorder" value="0">
-                        </div>
-                        <hr>
+                <!-- ================= entry form (landscape grid, full width) ================= -->
+                <form id="createorderform" autocomplete="off">
+                    <div class="erp-form-grid">
                         <div class="form-group">
-                            <label class="small font-weight-bold text-dark">Remark</label>
-                            <textarea name="remark" id="remark" class="form-control form-control-sm"></textarea>
+                            <label class="small font-weight-bold text-dark">Order Date*</label>
+                            <input type="date" class="form-control form-control-sm" name="grndate" id="grndate" value="<?php echo date('Y-m-d') ?>" required>
                         </div>
-                        <div class="form-group mt-2">
-                            <button type="button" id="btncreateorder"
-                                class="btn btn-outline-primary btn-sm fa-pull-right"><i
-                                    class="fas fa-save"></i>&nbsp;Create
-                                Good Receive Note</button>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Purchase Order</label>
+                            <select class="form-control form-control-sm" name="porder" id="porder">
+                                <option value="">Select</option>
+                                <?php foreach($porderlist->result() as $rowporderlist){ ?>
+                                <option value="<?php echo $rowporderlist->idtbl_porder; ?>">
+                                    <?php echo 'KND/PO-' . str_pad($rowporderlist->idtbl_porder, 6, '0', STR_PAD_LEFT); ?>
+                                </option>
+                                <?php } ?>
+                            </select>
                         </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Supplier*</label>
+                            <select style="width:100%" class="form-control form-control-sm" name="supplier" id="supplier" required>
+                                <option value="">Select</option>
+                                <?php foreach($supplierlist->result() as $rowsupplierlist){ ?>
+                                <option value="<?php echo $rowsupplierlist->idtbl_supplier ?>"><?php echo $rowsupplierlist->suppliername ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Product*</label>
+                            <select style="width:100%" class="form-control form-control-sm" name="product" id="product" required>
+                                <option value="">Select</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Qty*</label>
+                            <input type="text" id="newqty" name="newqty" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Unit Price</label>
+                            <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
+                            <small id="lastgrnpricehint" class="text-muted d-block mt-1">
+                                Last GRN cost will appear here after selecting product
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Sale Price</label>
+                            <input type="text" id="saleprice" name="saleprice" class="form-control form-control-sm" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Batch No</label>
+                            <input type="text" id="batchno" name="batchno" class="form-control form-control-sm" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Invoice No</label>
+                            <input type="text" id="invoice" name="invoice" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group">
+                            <label class="small font-weight-bold text-dark">Dispatch No</label>
+                            <input type="text" id="dispatch" name="dispatch" class="form-control form-control-sm">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="small font-weight-bold text-dark">Comment</label>
+                            <textarea name="comment" id="comment" class="form-control form-control-sm" rows="1"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3 text-right">
+                        <button type="button" id="formsubmit" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus"></i>&nbsp;Add to list</button>
+                        <input name="submitBtn" type="submit" value="Save" id="submitBtn" class="d-none">
+                    </div>
+                    <input type="hidden" name="refillprice" id="refillprice" value="">
+                </form>
+
+                <!-- ================= order lines + totals (own card, full width, below the form) ================= -->
+                <div class="card mb-3">
+                    <div class="card-header">Order Items</div>
+                    <div class="card-body p-0 p-2">
+                        <table class="table table-striped table-bordered table-sm small mb-0" id="tableorder">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Comment</th>
+                                    <th class="d-none">Quater</th>
+                                    <th class="d-none">ProductID</th>
+                                    <th class="d-none">Unitprice</th>
+                                    <th>Unitprice</th>
+                                    <th class="d-none">Saleprice</th>
+                                    <th>Saleprice</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="d-none">HideTotal</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <span class="text-muted small">Tap a row to remove it</span>
+                        <h5 class="font-weight-700 mb-0" id="divtotal">Rs. 0.00</h5>
                     </div>
                 </div>
+                <input type="hidden" id="hidetotalorder" value="0">
+
+                <div class="erp-form-grid">
+                    <div class="form-group full-width">
+                        <label class="small font-weight-bold text-dark">Remark</label>
+                        <textarea name="remark" id="remark" class="form-control form-control-sm" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="text-right">
+                    <button type="button" id="btncreateorder" class="btn btn-primary btn-sm px-4"><i class="fas fa-save"></i>&nbsp;Create Good Receive Note</button>
+                </div>
+
 			</div>
 		</div>
 	</div>
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="viewmodal" data-backdrop="static" data-keyboard="false" tabindex="-1"
 	aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -238,12 +224,12 @@ include "include/topnavbar.php";
                 [10, 25, 50, 'All'],
             ],
             buttons: [
-                { extend: 'csv', className: 'btn btn-ocean-blue btn-sm', title: 'Good Receive Information', text: '<i class="fas fa-file-csv mr-2"></i> CSV' },
-                { extend: 'pdf', className: 'btn btn-ocean-blue btn-sm', title: 'Good Receive Information', text: '<i class="fas fa-file-pdf mr-2"></i> PDF' },
+                { extend: 'csv', className: 'btn btn-sm', title: 'Good Receive Information', text: '<i class="fas fa-file-csv mr-2"></i> CSV' },
+                { extend: 'pdf', className: 'btn btn-sm', title: 'Good Receive Information', text: '<i class="fas fa-file-pdf mr-2"></i> PDF' },
                 { 
                     extend: 'print', 
                     title: 'Good Receive Information',
-                    className: 'btn btn-ocean-blue btn-sm', 
+                    className: 'btn btn-sm', 
                     text: '<i class="fas fa-print mr-2"></i> Print',
                     customize: function (win) {
                         $(win.document.body).find('table')
@@ -252,11 +238,6 @@ include "include/topnavbar.php";
                     }, 
                 },
             ],
-            ajax: {
-                url: "<?php echo base_url() ?>scripts/customerlist.php",
-                type: "POST", // you can use GET
-                // data: function(d) {}
-            },
             ajax: {
                 url: "<?php echo base_url() ?>scripts/goodreceivelist.php",
                 type: "POST", // you can use GET
@@ -307,8 +288,8 @@ include "include/topnavbar.php";
                     "className": '',
                     "data": null,
                     "render": function(data, type, full) {
-                        if(full['approvestatus']==1){return '<i class="fas fa-check text-success mr-2"></i>Approved GRN';}
-                        else{return 'Not Approved GRN';}
+                        if(full['approvestatus']==1){return '<span class="badge badge-success"><i class="fas fa-check mr-1"></i>Approved GRN</span>';}
+                        else{return '<span class="badge badge-warning">Not Approved GRN</span>';}
                     }
                 },
                 {
@@ -320,7 +301,7 @@ include "include/topnavbar.php";
                         button+='<button class="btn btn-dark btn-sm btnview mr-1" data-toggle="tooltip" data-placement="bottom" title="View GRN" id="'+full['idtbl_grn']+'"><i class="fas fa-eye"></i></button>';
                         button+='<a href="<?php echo base_url() ?>Goodreceive/Getgrnprintpdf/'+full['idtbl_grn']+'" target="_blank" class="btn btn-danger btn-sm mr-1" data-toggle="tooltip" data-placement="bottom" title="Print GRN"><i class="fas fa-file-pdf"></i></a>';
                         if(full['approvestatus']==1){
-                            button+='<button class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-check-square"></i></button>';
+                            button+='<button class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='" data-toggle="tooltip" title="Approved"><i class="fas fa-check-square"></i></button>';
                         }else{
                             button += '<a href="<?php echo base_url() ?>Goodreceive/Goodreceivestatus/' 
                                     + full['idtbl_grn'] 

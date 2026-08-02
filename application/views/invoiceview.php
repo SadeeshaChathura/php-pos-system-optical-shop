@@ -33,31 +33,27 @@ include "include/topnavbar.php";
             </div>
             <div class="container-fluid mt-2 p-0 p-2">
             	<div class="card">
-            		<div class="card-body">
-
-            			<div class="row">
-            				<div class="col-12">
-            					<div class="scrollbar pb-3" id="style-2">
-            						<table class="table table-striped table-bordered table-sm nowrap" id="invoicetable"
-            							style="width:100%">
-            							<thead class="table-warning">
-            								<tr>
-            									<th>#</th>
-            									<th>Invoice Date</th>
-                                                <th>Invoice No.</th>
-            									<th>Customer</th>
-                                                <th>Gross Total</th>
-                                                <th>Discount</th>
-            									<th>Net Total</th>
-                                                <th>Payment Method</th>
-            									<th>Action</th>
-            								</tr>
-            							</thead>
-            							<tbody>
-            							</tbody>
-            						</table>
-            					</div>
-            				</div>
+                    <div class="card-header">Invoice History</div>
+            		<div class="card-body p-0 p-2">
+            			<div class="scrollbar pb-3" id="style-2">
+            				<table class="table table-striped table-bordered table-sm nowrap" id="invoicetable"
+            					style="width:100%">
+            					<thead>
+            						<tr>
+            							<th>#</th>
+            							<th>Invoice Date</th>
+                                        <th>Invoice No.</th>
+            							<th>Customer</th>
+                                        <th>Gross Total</th>
+                                        <th>Discount</th>
+            							<th>Net Total</th>
+                                        <th>Payment Method</th>
+            							<th>Action</th>
+            						</tr>
+            					</thead>
+            					<tbody>
+            					</tbody>
+            				</table>
             			</div>
             		</div>
             </div>
@@ -79,26 +75,28 @@ include "include/topnavbar.php";
 			<div class="modal-body">
 				<div class="col-12">
 					<form id="createorderform2" autocomplete="off">
-						<div class="form-row mb-1">
-							<label class="small font-weight-bold">Product*</label><br>
-							<select class="form-control form-control-sm" name="productlist[]" id="productlist" required style="width: 100%;">
-							</select>
-						</div>
-                        <div class="form-row mb-1">
-                        	<label class="small font-weight-bold">Location*</label>
-                        	<select class="form-control form-control-sm" name="location" id="location">
-                        		<option value="">Select</option>
-                        		<?php foreach($location->result() as $rowlocationlist){ ?>
-                        		<option value="<?php echo $rowlocationlist->idtbl_location ?>">
-                        			<?php echo $rowlocationlist->location ?></option>
-                        		<?php } ?>
-                        	</select>
-                        </div>
-						<div class="form-row mb-1">
-							<label class="small font-weight-bold">Batch No.*</label><br>
-							<select class="form-control form-control-sm" name="batchlist[]" id="batchlist" required
-								multiple style="width: 100%;">
-							</select>
+						<div class="erp-form-grid">
+							<div class="form-group full-width">
+								<label class="small font-weight-bold">Product*</label>
+								<select class="form-control form-control-sm" name="productlist[]" id="productlist" required style="width: 100%;">
+								</select>
+							</div>
+                            <div class="form-group full-width">
+                            	<label class="small font-weight-bold">Location*</label>
+                            	<select class="form-control form-control-sm" name="location" id="location">
+                            		<option value="">Select</option>
+                            		<?php foreach($location->result() as $rowlocationlist){ ?>
+                            		<option value="<?php echo $rowlocationlist->idtbl_location ?>">
+                            			<?php echo $rowlocationlist->location ?></option>
+                            		<?php } ?>
+                            	</select>
+                            </div>
+							<div class="form-group full-width">
+								<label class="small font-weight-bold">Batch No.*</label>
+								<select class="form-control form-control-sm" name="batchlist[]" id="batchlist" required
+									multiple style="width: 100%;">
+								</select>
+							</div>
 						</div>
                         <input type="hidden" id="invoice_id" name="invoice_id">
 						<div class="form-group mt-3 text-right">
@@ -235,9 +233,9 @@ include "include/topnavbar.php";
 
                             var button = '';
 
-                            button += '<button class="btn btn-secondary btn-sm btnviewList mr-1 ';
-                            if (editcheck != 1) { button += 'd-none'; }
-                            button += '" id="' + full['idtbl_invoice'] + '"><i class="fas fa-list"></i></button>';
+                            button += '<button class="btn btn-secondary btn-sm btnviewList mr-1" data-toggle="tooltip" title="View Details" ';
+                            if (editcheck != 1) { button += 'style="display:none" '; }
+                            button += 'id="' + full['idtbl_invoice'] + '"><i class="fas fa-list"></i></button>';
 
                             var printUrl = '';
 
@@ -247,7 +245,7 @@ include "include/topnavbar.php";
                                 printUrl = '<?php echo base_url() ?>Directsale/Getcreditprintbill/' + full['idtbl_invoice'];
                             }
 
-                            button += '<a href="' + printUrl + '" target="_blank" class="btn btn-primary btn-sm">' +
+                            button += '<a href="' + printUrl + '" target="_blank" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Print Bill">' +
                                     '<i class="fas fa-file-invoice"></i></a>';
 
                             return button;
@@ -266,12 +264,12 @@ include "include/topnavbar.php";
                 [10, 25, 50, 'All'],
             ],
             buttons: [
-                { extend: 'csv', className: 'btn btn-ocean-blue btn-sm', title: 'Invoice List Information', text: '<i class="fas fa-file-csv mr-2"></i> CSV' },
-                { extend: 'pdf', className: 'btn btn-ocean-blue btn-sm', title: 'Invoice List Information', text: '<i class="fas fa-file-pdf mr-2"></i> PDF' },
+                { extend: 'csv', className: 'btn btn-sm', title: 'Invoice List Information', text: '<i class="fas fa-file-csv mr-2"></i> CSV' },
+                { extend: 'pdf', className: 'btn btn-sm', title: 'Invoice List Information', text: '<i class="fas fa-file-pdf mr-2"></i> PDF' },
                 { 
                     extend: 'print', 
                     title: 'Invoice List Information',
-                    className: 'btn btn-ocean-blue btn-sm', 
+                    className: 'btn btn-sm', 
                     text: '<i class="fas fa-print mr-2"></i> Print',
                     customize: function (win) {
                         $(win.document.body).find('table')
@@ -310,12 +308,12 @@ include "include/topnavbar.php";
                     [10, 25, 50, 'All'],
                 ],
                 buttons: [
-                    { extend: 'csv', className: 'btn btn-ocean-blue btn-sm', title: 'Invoice List Information', text: '<i class="fas fa-file-csv mr-2"></i> CSV' },
-                    { extend: 'pdf', className: 'btn btn-ocean-blue btn-sm', title: 'Invoice List Information', text: '<i class="fas fa-file-pdf mr-2"></i> PDF' },
+                    { extend: 'csv', className: 'btn btn-sm', title: 'Invoice List Information', text: '<i class="fas fa-file-csv mr-2"></i> CSV' },
+                    { extend: 'pdf', className: 'btn btn-sm', title: 'Invoice List Information', text: '<i class="fas fa-file-pdf mr-2"></i> PDF' },
                     { 
                         extend: 'print', 
                         title: 'Invoice List Information',
-                        className: 'btn btn-ocean-blue btn-sm', 
+                        className: 'btn btn-sm', 
                         text: '<i class="fas fa-print mr-2"></i> Print',
                         customize: function (win) {
                             $(win.document.body).find('table')

@@ -22,4 +22,9 @@ class Materialcategory extends CI_Controller {
 		$this->load->model('Materialcategoryinfo');
         $result=$this->Materialcategoryinfo->Materialcategoryedit();
 	}
+    public function Materialcategorygeneratecode(){
+        $this->load->model('Materialcategoryinfo');
+        $code = $this->Materialcategoryinfo->generateCategoryCode();
+        echo json_encode(array('code' => $code));
+    }
 }

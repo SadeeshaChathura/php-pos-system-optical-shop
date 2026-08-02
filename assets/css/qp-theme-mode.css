@@ -1,0 +1,841 @@
+/* ==========================================================================
+   LIGHT / DARK / SYSTEM MODE
+   --------------------------------------------------------------------------
+   Load this AFTER qp-sidebar.css (and after your base theme CSS).
+   Toggled by topnavbar.php's mode-switch script, which sets:
+     <html data-color-mode="light|dark">        <- resolved mode, use this for styling
+     <html data-color-mode-pref="light|dark|system">  <- the user's raw choice
+   ========================================================================== */
+
+/* ---- Mode switch control (Light / Dark / System) ---- */
+.qp-theme-menu-title {
+  padding: 0.5rem 1rem 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8a97a0;
+}
+
+.qp-mode-switch {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0 0.75rem 0.6rem;
+  margin-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.qp-mode-btn {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.55rem 0.3rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: transparent;
+  color: #6c7680;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.qp-mode-btn svg,
+.qp-mode-btn i {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+.qp-mode-btn:hover {
+  background-color: rgba(0, 123, 255, 0.08);
+  color: #007bff;
+  border-color: rgba(0, 123, 255, 0.25);
+}
+.qp-mode-btn.active {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}
+
+/* ==========================================================================
+   DARK MODE — DESIGN TOKEN OVERRIDES
+   --------------------------------------------------------------------------
+   The dashboard (and other pages) are built entirely on var(--erp-*, fallback)
+   custom properties — --erp-text, --erp-text-muted, --erp-surface,
+   --erp-border, --erp-primary, --erp-danger, --erp-shadow, --erp-radius, etc.
+   Those properties were never previously defined for dark mode, so every
+   component using them silently fell back to its light-mode default
+   (e.g. --erp-text: #222) even on a dark background — which is why text
+   read as "muted"/near-invisible instead of actually switching color.
+
+   Redefining the tokens once here means every component built on them
+   (stat cards, panel cards, calendar card, flatpickr, badges, movement
+   rows, reorder alerts, overdue-orders table) inherits correctly with
+   NO per-component patching required.
+   ========================================================================== */
+
+html[data-color-mode="dark"] {
+  --erp-bg: #0f1620;
+  --erp-surface: #161f2c;
+  --erp-border: rgba(255, 255, 255, 0.08);
+  --erp-text: #f1f5f9;
+  --erp-text-muted: #a8b3bd;
+  --erp-primary: #8fc2ff;
+  --erp-primary-soft: rgba(0, 123, 255, 0.18);
+  --erp-danger: #ff8a93;
+  --erp-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  --erp-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --erp-radius: 0.6rem;
+  --erp-radius-sm: 0.4rem;
+}
+
+html[data-color-mode="dark"] body {
+  background-color: var(--erp-bg) !important;
+  color: var(--erp-text) !important;
+}
+
+/* Generic heading fallback — catches plain <h5>/<h4> titles (e.g. GRN page
+   header) that sit outside .card-header and were never covered before */
+html[data-color-mode="dark"] h1,
+html[data-color-mode="dark"] h2,
+html[data-color-mode="dark"] h3,
+html[data-color-mode="dark"] h4,
+html[data-color-mode="dark"] h5,
+html[data-color-mode="dark"] h6 {
+  color: var(--erp-text) !important;
+}
+
+/* Page header + content shell */
+html[data-color-mode="dark"] #layoutSidenav_content .page-header {
+  background-color: var(--erp-surface) !important;
+  border-bottom: 1px solid var(--erp-border);
+}
+html[data-color-mode="dark"] .page-header-title,
+html[data-color-mode="dark"] .page-header-title span {
+  color: var(--erp-text) !important;
+}
+
+/* Cards */
+html[data-color-mode="dark"] .card {
+  background-color: var(--erp-surface) !important;
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text);
+}
+html[data-color-mode="dark"] .card-header {
+  background-color: #1b2532 !important;
+  border-bottom-color: var(--erp-border) !important;
+  color: var(--erp-text);
+}
+html[data-color-mode="dark"] .card-body {
+  color: var(--erp-text);
+}
+html[data-color-mode="dark"] .card-footer {
+  background-color: #1b2532 !important;
+  border-top-color: var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+
+/* Tables / DataTables */
+html[data-color-mode="dark"] table.dataTable,
+html[data-color-mode="dark"] .table {
+  color: var(--erp-text) !important;
+  background-color: transparent !important;
+}
+html[data-color-mode="dark"] .table thead th,
+html[data-color-mode="dark"] table.dataTable thead th {
+  color: var(--erp-text-muted) !important;
+  border-color: var(--erp-border) !important;
+  background-color: #1b2532 !important;
+}
+html[data-color-mode="dark"] .table td,
+html[data-color-mode="dark"] .table th,
+html[data-color-mode="dark"] table.dataTable td,
+html[data-color-mode="dark"] table.dataTable th {
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text);
+}
+html[data-color-mode="dark"] .table-striped tbody tr:nth-of-type(odd),
+html[data-color-mode="dark"] table.dataTable.stripe tbody tr.odd,
+html[data-color-mode="dark"] table.dataTable.display tbody tr.odd {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+html[data-color-mode="dark"] .table-bordered,
+html[data-color-mode="dark"] .table-bordered td,
+html[data-color-mode="dark"] .table-bordered th {
+  border-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #fff !important;
+}
+
+/* Any plain (non .table-hover) table row still gets a native browser
+   hover cursor state on click-drag selection; without this, selecting
+   text inside a dark row falls back to the OS default light-blue/white
+   selection highlight, which is unreadable against light dark-mode text. */
+html[data-color-mode="dark"] ::selection {
+  background-color: rgba(0, 123, 255, 0.35);
+  color: #fff;
+}
+
+/* Reorder/overdue alert rows specifically — keep the red tint on hover
+   instead of the plain hover rule's neutral white overlay washing it out */
+html[data-color-mode="dark"] tr.reorder-alert:hover,
+html[data-color-mode="dark"] .reorder-alert:hover {
+  background-color: rgba(214, 69, 69, 0.14) !important;
+  color: var(--erp-text) !important;
+}
+
+/* Forms */
+html[data-color-mode="dark"] .form-control,
+html[data-color-mode="dark"] .custom-select,
+html[data-color-mode="dark"] select.form-control,
+html[data-color-mode="dark"] select {
+  background-color: #1b2532 !important;
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+/* Native <option> elements — Chrome/Firefox render these via the OS
+   picker, which previously picked up dark styling for free from
+   `color-scheme: dark`. Now that that's removed (it was also washing
+   out button colors), style options explicitly instead. */
+html[data-color-mode="dark"] select option {
+  background-color: #1b2532;
+  color: var(--erp-text);
+}
+html[data-color-mode="dark"] .form-control::placeholder {
+  color: #6c7680;
+}
+html[data-color-mode="dark"] .form-control:focus {
+  background-color: #1b2532 !important;
+  border-color: #007bff !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
+}
+html[data-color-mode="dark"] label {
+  color: var(--erp-text-muted);
+}
+html[data-color-mode="dark"] .input-group-text {
+  background-color: #1b2532 !important;
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text-muted) !important;
+}
+
+/* Buttons (outline/secondary variants only — brand-colored buttons stay as-is) */
+html[data-color-mode="dark"] .btn-secondary {
+  background-color: #2a3644 !important;
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .btn-outline-secondary {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: var(--erp-text-muted) !important;
+}
+
+/* Dropdown menus (notifications, user, appearance) */
+html[data-color-mode="dark"] .dropdown-menu {
+  background-color: #1b2532 !important;
+  border-color: var(--erp-border) !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-color-mode="dark"] .dropdown-item {
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: #fff !important;
+}
+html[data-color-mode="dark"] .dropdown-notifications-header {
+  color: var(--erp-text) !important;
+  border-bottom-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .dropdown-notifications-item-content-details {
+  color: var(--erp-text-muted) !important;
+}
+html[data-color-mode="dark"] .dropdown-notifications-item-content-text {
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .dropdown-notifications-footer {
+  background-color: #202b3a !important;
+  color: var(--erp-text-muted) !important;
+  border-top-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .qp-mode-btn {
+  border-color: var(--erp-border);
+  color: var(--erp-text-muted);
+}
+html[data-color-mode="dark"] .qp-mode-switch {
+  border-bottom-color: var(--erp-border);
+}
+html[data-color-mode="dark"] .qp-theme-menu-title {
+  color: var(--erp-text-muted);
+}
+
+/* Modals */
+html[data-color-mode="dark"] .modal-content {
+  background-color: var(--erp-surface) !important;
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .modal-header,
+html[data-color-mode="dark"] .modal-footer {
+  border-color: var(--erp-border) !important;
+}
+
+/* Scrollbars (webkit) */
+html[data-color-mode="dark"] ::-webkit-scrollbar-track {
+  background: var(--erp-bg);
+}
+html[data-color-mode="dark"] ::-webkit-scrollbar-thumb {
+  background: #2a3644;
+  border-radius: 6px;
+}
+
+/* Text utility classes */
+html[data-color-mode="dark"] .text-muted {
+  color: var(--erp-text-muted) !important;
+}
+html[data-color-mode="dark"] .text-dark {
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] hr,
+html[data-color-mode="dark"] .border,
+html[data-color-mode="dark"] .border-top,
+html[data-color-mode="dark"] .border-bottom {
+  border-color: var(--erp-border) !important;
+}
+
+/* Smooth transition when switching modes, without animating everything
+   on initial page load (the .qp-mode-ready class is added by a tiny
+   inline script right after body starts rendering) */
+html.qp-mode-ready body,
+html.qp-mode-ready .card,
+html.qp-mode-ready .dropdown-menu,
+html.qp-mode-ready .form-control,
+html.qp-mode-ready .table {
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+/* ==========================================================================
+   DARK MODE — Bootstrap contextual table/text/badge colors
+   ========================================================================== */
+
+html[data-color-mode="dark"] .table-danger,
+html[data-color-mode="dark"] .table-danger > td,
+html[data-color-mode="dark"] .table-danger > th,
+html[data-color-mode="dark"] tr.table-danger {
+  background-color: rgba(220, 53, 69, 0.16) !important;
+  color: #ff8a93 !important;
+}
+html[data-color-mode="dark"] .table-warning,
+html[data-color-mode="dark"] .table-warning > td,
+html[data-color-mode="dark"] .table-warning > th {
+  background-color: rgba(255, 193, 7, 0.14) !important;
+  color: #ffd166 !important;
+}
+html[data-color-mode="dark"] .table-success,
+html[data-color-mode="dark"] .table-success > td,
+html[data-color-mode="dark"] .table-success > th {
+  background-color: rgba(40, 167, 69, 0.16) !important;
+  color: #7ee2a8 !important;
+}
+html[data-color-mode="dark"] .table-info,
+html[data-color-mode="dark"] .table-info > td,
+html[data-color-mode="dark"] .table-info > th {
+  background-color: rgba(23, 162, 184, 0.16) !important;
+  color: #7fd8e8 !important;
+}
+html[data-color-mode="dark"] .table-primary,
+html[data-color-mode="dark"] .table-primary > td,
+html[data-color-mode="dark"] .table-primary > th {
+  background-color: rgba(0, 123, 255, 0.16) !important;
+  color: #8fc2ff !important;
+}
+html[data-color-mode="dark"] .table-secondary,
+html[data-color-mode="dark"] .table-light,
+html[data-color-mode="dark"] .table-active {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .table-hover tbody tr.table-danger:hover,
+html[data-color-mode="dark"] .table-hover tbody tr.table-warning:hover,
+html[data-color-mode="dark"] .table-hover tbody tr.table-success:hover,
+html[data-color-mode="dark"] .table-hover tbody tr.table-info:hover,
+html[data-color-mode="dark"] .table-hover tbody tr.table-primary:hover {
+  filter: brightness(1.25);
+}
+
+html[data-color-mode="dark"] .text-danger    { color: #ff8a93 !important; }
+html[data-color-mode="dark"] .text-warning   { color: #ffd166 !important; }
+html[data-color-mode="dark"] .text-success   { color: #7ee2a8 !important; }
+html[data-color-mode="dark"] .text-info      { color: #7fd8e8 !important; }
+html[data-color-mode="dark"] .text-primary   { color: #8fc2ff !important; }
+html[data-color-mode="dark"] .text-secondary { color: var(--erp-text-muted) !important; }
+
+html[data-color-mode="dark"] .badge-danger    { background-color: rgba(220, 53, 69, 0.22) !important; color: #ff8a93 !important; }
+html[data-color-mode="dark"] .badge-warning   { background-color: rgba(255, 193, 7, 0.2) !important;  color: #ffd166 !important; }
+html[data-color-mode="dark"] .badge-success   { background-color: rgba(40, 167, 69, 0.22) !important; color: #7ee2a8 !important; }
+html[data-color-mode="dark"] .badge-info      { background-color: rgba(23, 162, 184, 0.22) !important; color: #7fd8e8 !important; }
+html[data-color-mode="dark"] .badge-primary   { background-color: rgba(0, 123, 255, 0.22) !important;  color: #8fc2ff !important; }
+html[data-color-mode="dark"] .badge-secondary,
+html[data-color-mode="dark"] .badge-light {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--erp-text) !important;
+}
+
+/* ==========================================================================
+   DARK MODE — page header icon box
+   ========================================================================== */
+
+html[data-color-mode="dark"] .page-header-icon {
+  background-color: rgba(0, 123, 255, 0.16) !important;
+  color: #8fc2ff !important;
+  border-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .page-header-title {
+  color: var(--erp-text) !important;
+}
+
+/* ==========================================================================
+   DARK MODE — generic wrapper/container fallbacks
+   ========================================================================== */
+
+html[data-color-mode="dark"] .erp-panel-table,
+html[data-color-mode="dark"] .erp-panel-form,
+html[data-color-mode="dark"] .scrollbar,
+html[data-color-mode="dark"] #style-2,
+html[data-color-mode="dark"] .container-fluid,
+html[data-color-mode="dark"] .bg-white,
+html[data-color-mode="dark"] .bg-light {
+  background-color: transparent !important;
+}
+
+/* Any table nested inside a Bootstrap modal (Create PO/GRN order-items
+   table, the Invoice-View "View Invoice List" DataTable, the batch-update
+   form) — same treatment the generic .table/.dataTable rules give the
+   main page, since tables re-inherit a fresh background context inside
+   a themed .modal-content and can end up under-covered otherwise. */
+html[data-color-mode="dark"] .modal-body table.dataTable,
+html[data-color-mode="dark"] .modal-body .table {
+  color: var(--erp-text) !important;
+  background-color: transparent !important;
+}
+html[data-color-mode="dark"] .modal-body table.dataTable thead th,
+html[data-color-mode="dark"] .modal-body .table thead th {
+  background-color: #1b2532 !important;
+  color: var(--erp-text-muted) !important;
+  border-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .modal-body table.dataTable td,
+html[data-color-mode="dark"] .modal-body table.dataTable th,
+html[data-color-mode="dark"] .modal-body .table td,
+html[data-color-mode="dark"] .modal-body .table th {
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+/* tfoot (e.g. the "Total:" summary row in View Invoice List) wasn't
+   guaranteed a color before — it was inheriting whatever the parent
+   modal-content background left behind, which is why it read as
+   near-invisible on a dark row. */
+html[data-color-mode="dark"] .modal-body table.dataTable tfoot th,
+html[data-color-mode="dark"] .modal-body table.dataTable tfoot td,
+html[data-color-mode="dark"] .modal-body .table tfoot th,
+html[data-color-mode="dark"] .modal-body .table tfoot td {
+  background-color: #1b2532 !important;
+  color: var(--erp-text) !important;
+  border-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .modal-body .table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Print-preview documents (Purchase Order / GRN "view" modals) stay
+   intentionally white — they represent what prints on paper — but on a
+   dark backdrop they need a visible edge instead of blending straight
+   into the modal-content dark background behind them. */
+html[data-color-mode="dark"] #viewhtml,
+html[data-color-mode="dark"] #printorder {
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   DARK MODE — PO / GRN PRINT-PREVIEW CARDS (actual markup)
+   --------------------------------------------------------------------------
+   Purchaseorderinfo::Purchaseorderview() and Goodreceiveinfo::Goodreceiveview()
+   both inject a fresh <style> block into #viewhtml on every AJAX call,
+   hardcoding .po-card/.grn-card etc. to background:#fff with explicit
+   dark text colors baked in. That inline <style> block behaves like any
+   other stylesheet — it just loads after ours in the DOM, so normal
+   specificity/!important rules here can still override it once we target
+   the exact class names it defines.
+   ========================================================================== */
+html[data-color-mode="dark"] .po-card,
+html[data-color-mode="dark"] .grn-card {
+  background-color: var(--erp-surface) !important;
+  border-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .company-box,
+html[data-color-mode="dark"] .supplier-box,
+html[data-color-mode="dark"] .meta-box {
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .po-title,
+html[data-color-mode="dark"] .grn-title {
+  color: #8fc2ff !important;
+}
+html[data-color-mode="dark"] .po-table th,
+html[data-color-mode="dark"] .table-grn th {
+  background-color: #0d2f52 !important;
+  color: #fff !important;
+}
+html[data-color-mode="dark"] .po-table td,
+html[data-color-mode="dark"] .table-grn td {
+  border-bottom-color: var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .po-table td small,
+html[data-color-mode="dark"] .table-grn td small {
+  color: var(--erp-text-muted) !important;
+}
+html[data-color-mode="dark"] .total-box,
+html[data-color-mode="dark"] .grn-total {
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .badge,
+html[data-color-mode="dark"] .badge-info {
+  background-color: rgba(0, 123, 255, 0.16) !important;
+  color: #8fc2ff !important;
+}
+html[data-color-mode="dark"] .company-box a,
+html[data-color-mode="dark"] .supplier-box a {
+  color: #8fc2ff !important;
+}
+
+/* ==========================================================================
+   DARK MODE — FLATPICKR CALENDAR (Dashboard "Filter by Date")
+   --------------------------------------------------------------------------
+   dashboard.php ships its own inline <style> block that themes flatpickr's
+   border, weekday row, month header, and day text using var(--erp-*, ...),
+   which already inherits our redefined dark tokens correctly. What it
+   never sets is a background on the outer container itself — the flatpickr
+   library's own bundled CSS (flatpickr.min.css) hardcodes that to white,
+   and since nothing in the page's own override touches it, that default
+   was showing straight through even in dark mode.
+   ========================================================================== */
+html[data-color-mode="dark"] .flatpickr-calendar.inline,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-innerContainer,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-rContainer,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-days,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .dayContainer {
+  background-color: var(--erp-surface) !important;
+}
+
+/* Selected day: the page's own rule uses var(--erp-primary, #212529),
+   which we've redefined to a light blue (#8fc2ff) for body text/icons —
+   good for text, but too pale as a solid fill behind white day-number
+   text. Give the selected day a proper solid blue fill in dark mode. */
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.selected,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.selected:hover,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.selected:focus,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.selected:active,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.selected.today,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.selected.today:hover {
+  background-color: #007bff !important;
+  border-color: #007bff !important;
+  color: #fff !important;
+}
+
+/* Disabled days: hardcoded to a very light grey (#dee2e6) in the page's
+   own style, meant to look faint on a white background — on a dark
+   background that same color reads as bright/prominent instead of muted. */
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.flatpickr-disabled,
+html[data-color-mode="dark"] .flatpickr-calendar.inline .flatpickr-day.flatpickr-disabled:hover {
+  color: #3a4756 !important;
+}
+   --------------------------------------------------------------------------
+   The .modal-body tfoot rule above only covers tables inside Bootstrap
+   modals. Report pages like GRN Report / Purchase Order Report render
+   their DataTable footerCallback totals directly on the page (no modal
+   wrapper), so that rule never reached them — same near-invisible
+   "faint totals row" symptom, just outside a modal this time.
+   ========================================================================== */
+html[data-color-mode="dark"] table.dataTable tfoot th,
+html[data-color-mode="dark"] table.dataTable tfoot td,
+html[data-color-mode="dark"] .table tfoot th,
+html[data-color-mode="dark"] .table tfoot td {
+  background-color: #1b2532 !important;
+  color: var(--erp-text) !important;
+  border-color: var(--erp-border) !important;
+}
+
+/* ==========================================================================
+   DARK MODE — SELECT2 DROPDOWNS
+   --------------------------------------------------------------------------
+   Select2 builds its own DOM (.select2-container, .select2-dropdown,
+   .select2-results__option, .select2-search__field) completely separate
+   from Bootstrap's .form-control / .dropdown-menu, so none of the rules
+   above ever reached it. That's why the popup list background went dark
+   (it sits in a body-appended container that inherits page bg) while the
+   option text stayed at its light-mode color — nearly invisible.
+   ========================================================================== */
+
+/* Closed / collapsed control */
+html[data-color-mode="dark"] .select2-container--default .select2-selection--single,
+html[data-color-mode="dark"] .select2-container--default .select2-selection--multiple {
+  background-color: #1b2532 !important;
+  border-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: var(--erp-text-muted) !important;
+}
+html[data-color-mode="dark"] .select2-container--default .select2-selection--single .select2-selection__arrow b {
+  border-color: var(--erp-text-muted) transparent transparent transparent !important;
+}
+html[data-color-mode="dark"] .select2-container--default .select2-selection--multiple .select2-selection__choice {
+  background-color: #2a3644 !important;
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+
+/* Open dropdown panel */
+html[data-color-mode="dark"] .select2-dropdown {
+  background-color: #1b2532 !important;
+  border-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .select2-search--dropdown .select2-search__field {
+  background-color: #202b3a !important;
+  border-color: var(--erp-border) !important;
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .select2-results__option {
+  color: var(--erp-text) !important;
+  background-color: transparent !important;
+}
+html[data-color-mode="dark"] .select2-results__option[aria-selected="true"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .select2-container--default .select2-results__option--highlighted[aria-selected] {
+  background-color: #007bff !important;
+  color: #fff !important;
+}
+html[data-color-mode="dark"] .select2-results__group {
+  color: var(--erp-text-muted) !important;
+}
+html[data-color-mode="dark"] .select2-container--default.select2-container--disabled .select2-selection--single {
+  background-color: #161f2c !important;
+  color: var(--erp-text-muted) !important;
+}
+
+/* ==========================================================================
+   DARK MODE — POS PAGE (pos-styles.css)
+   --------------------------------------------------------------------------
+   The POS layout defines its own token system scoped to .pos-container
+   (--primary, --surface, --pos-bg, --text, --muted, --muted2, --border,
+   --accent-light, etc.) that's completely separate from --erp-*, so none
+   of the rules above ever reached it. Overriding those custom properties
+   under .pos-container here cascades into everything built on var(--text),
+   var(--surface), var(--border) etc. A few backgrounds are hardcoded hex
+   (#fff, #fafdfd, #f1f5f7) rather than tokenized, so those get explicit
+   overrides below as well.
+   ========================================================================== */
+
+html[data-color-mode="dark"] .pos-container {
+  --primary-dark: #8fc2ff;
+  --accent-light: rgba(0, 123, 255, 0.14);
+  --pos-bg: #0f1620;
+  --surface: #161f2c;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #f1f5f9;
+  --muted: #a8b3bd;
+  --muted2: #a8b3bd;
+  --success-bg: rgba(40, 167, 69, 0.16);
+  --warning-bg: rgba(255, 193, 7, 0.14);
+  --danger-bg: rgba(220, 53, 69, 0.16);
+}
+
+/* Search / barcode inputs */
+html[data-color-mode="dark"] .pos-search-box input,
+html[data-color-mode="dark"] .pos-form-control,
+html[data-color-mode="dark"] .pos-citem-price input,
+html[data-color-mode="dark"] .pos-citem-disc input,
+html[data-color-mode="dark"] .pos-qty-stepper input,
+html[data-color-mode="dark"] .pos-discount-input-row input,
+html[data-color-mode="dark"] .pos-discount-input-row select {
+  background-color: #1b2532 !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+html[data-color-mode="dark"] .pos-search-box input::placeholder {
+  color: #6c7680;
+}
+
+/* Category chips / stock filter buttons */
+html[data-color-mode="dark"] .pos-cat-chip,
+html[data-color-mode="dark"] .pos-sf-btn,
+html[data-color-mode="dark"] .pos-btn-icon,
+html[data-color-mode="dark"] .pos-btn-add-customer,
+html[data-color-mode="dark"] .pos-quick-cash-btn,
+html[data-color-mode="dark"] .pos-row-actions button {
+  background-color: #1b2532 !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+html[data-color-mode="dark"] .pos-cat-chip.active {
+  background-color: var(--primary) !important;
+  color: #fff !important;
+}
+html[data-color-mode="dark"] .pos-sf-btn.active {
+  background-color: var(--primary-dark) !important;
+  color: #0f1620 !important;
+}
+
+/* Product cards */
+html[data-color-mode="dark"] .pos-pcard {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+html[data-color-mode="dark"] .pos-pcard .icon-wrap {
+  background-color: rgba(0, 123, 255, 0.14) !important;
+}
+
+/* Cart / right panel */
+html[data-color-mode="dark"] .pos-right,
+html[data-color-mode="dark"] .pos-customer-strip,
+html[data-color-mode="dark"] .pos-customer-select,
+html[data-color-mode="dark"] .pos-cart-summary {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+html[data-color-mode="dark"] .pos-citem {
+  background-color: #1b2532 !important;
+  border-color: var(--border) !important;
+}
+html[data-color-mode="dark"] .pos-citem.edited {
+  background-color: rgba(255, 193, 7, 0.08) !important;
+}
+html[data-color-mode="dark"] .pos-qty-stepper {
+  border-color: var(--border) !important;
+}
+html[data-color-mode="dark"] .pos-qty-stepper button {
+  background-color: #202b3a !important;
+}
+html[data-color-mode="dark"] .pos-kbd {
+  background-color: #1b2532 !important;
+  border-color: var(--border) !important;
+}
+
+/* Modals */
+html[data-color-mode="dark"] .pos-modal-box {
+  background-color: var(--surface) !important;
+}
+html[data-color-mode="dark"] .pos-modal-header,
+html[data-color-mode="dark"] .pos-modal-footer {
+  border-color: var(--border) !important;
+}
+html[data-color-mode="dark"] .pos-modal-header button {
+  background-color: #1b2532 !important;
+}
+html[data-color-mode="dark"] .pos-cust-list,
+html[data-color-mode="dark"] .pos-cust-row {
+  border-color: var(--border) !important;
+}
+html[data-color-mode="dark"] .pos-cust-row:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Secondary button variant (light-grey by default) */
+html[data-color-mode="dark"] .pos-btn-secondary {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  background-color: #1b2532 !important;
+  color: var(--muted2) !important;
+}
+html[data-color-mode="dark"] .pos-btn-secondary:hover,
+html[data-color-mode="dark"] .pos-btn-secondary:focus {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  background-color: #232f40 !important;
+}
+
+/* DataTables inside POS modals (Previous Bills, Browse Products, Pending Orders) */
+html[data-color-mode="dark"] .pos-modal-box table.dataTable,
+html[data-color-mode="dark"] .pos-modal-box .table {
+  color: var(--text) !important;
+}
+html[data-color-mode="dark"] .pos-modal-box table.dataTable thead th,
+html[data-color-mode="dark"] .pos-modal-box .table thead th {
+  background-color: #1b2532 !important;
+  color: var(--muted2) !important;
+  border-color: var(--border) !important;
+}
+html[data-color-mode="dark"] .pos-modal-box table.dataTable td,
+html[data-color-mode="dark"] .pos-modal-box .table td {
+  border-color: var(--border) !important;
+}
+
+/* ==========================================================================
+   DARK MODE — TOP NAVBAR (topnavbar.php)
+   --------------------------------------------------------------------------
+   Best-effort override using the class names visible in topnavbar.php.
+   If the navbar still doesn't shift after this loads, its actual
+   background/text rules live in qp-sidebar.css (not covered here) and
+   need to be patched directly — Bootstrap's `navbar-light` class on the
+   <nav> also forces dark link/icon colors regardless of background, so
+   check for that class too.
+   ========================================================================== */
+
+html[data-color-mode="dark"] .topnav {
+  background-color: var(--erp-surface) !important;
+  border-bottom: 1px solid var(--erp-border) !important;
+}
+
+html[data-color-mode="dark"] .qp-welcome-label {
+  color: var(--erp-text-muted) !important;
+}
+html[data-color-mode="dark"] .qp-welcome-company {
+  color: var(--erp-text) !important;
+}
+
+html[data-color-mode="dark"] .qp-clock-badge {
+  color: var(--erp-text) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+html[data-color-mode="dark"] .qp-clock-badge svg,
+html[data-color-mode="dark"] .qp-clock-badge i {
+  color: var(--erp-text-muted) !important;
+  stroke: var(--erp-text-muted) !important;
+}
+
+html[data-color-mode="dark"] .btn-icon.btn-transparent-dark,
+html[data-color-mode="dark"] .qp-notif-trigger,
+html[data-color-mode="dark"] .qp-theme-trigger,
+html[data-color-mode="dark"] .qp-user-trigger,
+html[data-color-mode="dark"] #sidebarToggle {
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .btn-icon.btn-transparent-dark svg,
+html[data-color-mode="dark"] .qp-notif-trigger svg,
+html[data-color-mode="dark"] .qp-theme-trigger svg,
+html[data-color-mode="dark"] #sidebarToggle svg {
+  stroke: var(--erp-text) !important;
+  fill: none;
+}
+html[data-color-mode="dark"] .btn-icon.btn-transparent-dark:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html[data-color-mode="dark"] .qp-notif-badge {
+  background-color: #d64545 !important;
+  color: #fff !important;
+}
+
+html[data-color-mode="dark"] .dropdown-header {
+  background-color: transparent !important;
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .dropdown-user-details-name {
+  color: var(--erp-text) !important;
+}

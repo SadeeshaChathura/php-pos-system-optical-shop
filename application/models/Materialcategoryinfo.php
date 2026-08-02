@@ -1,5 +1,15 @@
 <?php
 class Materialcategoryinfo extends CI_Model{
+    public function generateCategoryCode(){
+        $this->db->select("MAX(CAST(SUBSTRING(categorycode, 5) AS UNSIGNED)) as maxcode", false);
+        $this->db->from('tbl_material_category');
+        $query = $this->db->get();
+        $row = $query->row();
+
+        $nextNumber = ($row && $row->maxcode) ? $row->maxcode + 1 : 1;
+
+        return 'CAT-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+    }
     public function Materialcategoryinsertupdate(){
         $this->db->trans_begin();
 

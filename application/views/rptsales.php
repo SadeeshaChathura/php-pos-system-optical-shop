@@ -12,20 +12,17 @@ include "include/topnavbar.php";
             <div class="page-header shadow">
                 <div class="container-fluid">
                     <div class="page-header-content py-3">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <h1 class="page-header-title">
-                                    <div class="page-header-icon"><i class="fas fa-chart-line"></i></div>
-                                    <span>Sales Report</span>
-                                </h1>
-                            </div>
-                        </div>
+                        <h1 class="page-header-title">
+                            <div class="page-header-icon"><i class="fas fa-chart-line"></i></div>
+                            <span>Sales Report</span>
+                        </h1>
                     </div>
                 </div>
             </div>
 
             <div class="container-fluid mt-2 p-0 p-2">
                 <div class="card">
+                    <div class="card-header">Filters</div>
                     <div class="card-body">
 
                         <!-- FILTERS -->
@@ -72,25 +69,28 @@ include "include/topnavbar.php";
                                 </select>
                             </div>
                         </div>
-                        <div class="row mb-2">
+                        <div class="row">
                             <div class="col-12 text-right">
                                 <button type="button" class="btn btn-sm btn-secondary" id="btnreset"><i class="fas fa-undo mr-1"></i>Reset</button>
                                 <button type="button" class="btn btn-sm btn-primary" id="btnapply"><i class="fas fa-filter mr-1"></i>Apply Filter</button>
                             </div>
                         </div>
 
-                        <hr class="border-dark">
+                    </div>
+                </div>
 
+                <div class="card mt-3">
+                    <div class="card-header">Sales</div>
+                    <div class="card-body p-0 p-2">
                         <div class="scrollbar pb-3" id="style-2">
                             <table class="table table-striped table-bordered table-sm nowrap" id="salesTable" style="width:100%">
-                                <thead class="table-warning" id="salesThead"></thead>
+                                <thead id="salesThead"></thead>
                                 <tbody></tbody>
                                 <tfoot>
                                     <tr id="salesTfoot"></tr>
                                 </tfoot>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </div>

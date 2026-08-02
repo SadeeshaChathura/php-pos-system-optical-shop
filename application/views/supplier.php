@@ -19,30 +19,28 @@ include "include/topnavbar.php";
                 </div>
             </div>
             <div class="container-fluid mt-2 p-0 p-2">
-                <div class="card">
-                    <div class="card-body p-0 p-2">
-                        <div class="row">
-                            <div class="col-4">
+                <div class="row erp-stack-row">
+
+                    <!-- ================= FORM CARD (top, full width, landscape) ================= -->
+                    <div class="erp-panel-form">
+                        <div class="card">
+                            <div class="card-header">Supplier Details</div>
+                            <div class="card-body">
                                 <form action="<?php echo base_url() ?>Supplier/Supplierinsertupdate" method="post" autocomplete="off">
-                                    <div class="form-row mb-1">
-                                        <div class="col-7">
-                                            <label class="small font-weight-bold text-dark">Supplier Name*</label>
+
+                                    <div class="erp-form-grid">
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Supplier Name*</label>
                                             <input type="text" class="form-control form-control-sm" name="suppliername"
                                                 id="suppliername" required>
                                         </div>
-                                        <div class="col-5">
-                                            <label class="small font-weight-bold text-dark">Supplier Code</label>
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Supplier Code</label>
                                             <input type="text" class="form-control form-control-sm" name="suppliercode"
                                                 id="suppliercode" maxlength="5" readonly>
-                                        </div>                               
-                                    </div>
-                                    <div class="form-group mb-1">
-                                        <label class="small font-weight-bold text-dark">Address*</label>
-                                        <textarea name="address" id="address" class="form-control form-control-sm"></textarea>
-                                    </div>
-                                    <div class="form-row mb-1">
-                                        <div class="col">
-                                            <label class="small font-weight-bold text-dark">Country*</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Country*</label>
                                             <select class="form-control form-control-sm" name="country" id="country" required>
                                                 <option value="">Select</option>
                                                 <?php foreach($countrylist->result() as $rowcountrylist){ ?>
@@ -50,65 +48,82 @@ include "include/topnavbar.php";
                                                 <?php } ?>
                                             </select>
                                         </div>
-                                        <div class="col">
-                                            <label class="small font-weight-bold text-dark">Email address*</label>
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Email address*</label>
                                             <input type="email" class="form-control form-control-sm" name="email" id="email">
                                         </div>
-                                    </div>
-                                    <div class="form-row mb-1">
-                                    <div class="col-6">
-                                        <label class="small font-weight-bold text-dark">Primary Contact*</label>
-                                        <input type="tel" class="form-control form-control-sm" name="primarycontact"
-                                            id="primarycontact" required>
-                                    </div>
-                                        <div class="col-6">
-                                            <label class="small font-weight-bold text-dark">Secondary Contact</label>
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Primary Contact*</label>
+                                            <input type="tel" class="form-control form-control-sm" name="primarycontact"
+                                                id="primarycontact" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Secondary Contact</label>
                                             <input type="tel" class="form-control form-control-sm" name="secondarycontact"
-                                            id="secondarycontact">
+                                                id="secondarycontact">
+                                        </div>
+
+                                        <div class="form-group full-width">
+                                            <label class="small font-weight-bold">Address*</label>
+                                            <textarea name="address" id="address" class="form-control form-control-sm" rows="2"></textarea>
                                         </div>
                                     </div>
-                                    <div class="form-row mb-1">
-                                        <div class="col-5">
-                                            <label class="small font-weight-bold text-dark">Product Category*</label>
-                                            <select class="form-control form-control-sm" name="category[]" id="category" multiple required>
-                                                <?php foreach($materialcategory->result() as $rowmaterialcategory){ ?>
-                                                <option value="<?php echo $rowmaterialcategory->idtbl_material_category ?>"><?php echo $rowmaterialcategory->categoryname ?></option>
-                                                <?php } ?>
-                                            </select>
+
+                                    <div class="erp-form-grid">
+                                        <div class="erp-form-grid-title">Products</div>
+
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Product Category*</label>
+                                            <div class="d-flex align-items-start">
+                                                <select class="form-control form-control-sm" name="category[]" id="category" multiple required>
+                                                    <?php foreach($materialcategory->result() as $rowmaterialcategory){ ?>
+                                                    <option value="<?php echo $rowmaterialcategory->idtbl_material_category ?>"><?php echo $rowmaterialcategory->categoryname ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                                <a href="<?php echo base_url() ?>Materialcategory" class="btn btn-primary btn-sm px-2 ml-2" <?php if($addcheck==0){echo 'disabled';} ?>>
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div class="col-1 mt-4">
-                                            <a href="<?php echo base_url() ?>Materialcategory" class="btn btn-primary btn-sm py-2 px-2 mt-2" <?php if($addcheck==0){echo 'disabled';} ?>>
-                                                <i class="fas fa-plus"></i>
-                                            </a>
+                                        <div class="form-group">
+                                            <label class="small font-weight-bold">Product Information*</label>
+                                            <div class="d-flex align-items-start">
+                                                <select class="form-control form-control-sm" name="materialinfo[]" id="materialinfo" multiple required>
+                                                <?php foreach($materialinfo->result() as $rowmaterialinfo){ ?>
+                                                    <option value="<?php echo $rowmaterialinfo->idtbl_material_info ?>"><?php echo $rowmaterialinfo->materialname.'-'.$rowmaterialinfo->materialinfocode ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                                <a href="<?php echo base_url() ?>Materialdetail" class="btn btn-primary btn-sm px-2 ml-2" <?php if($addcheck==0){echo 'disabled';} ?>>
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div class="col-5">
-                                            <label class="small font-weight-bold text-dark">Product Information*</label>
-                                            <select class="form-control form-control-sm" name="materialinfo[]" id="materialinfo" multiple required>
-                                            <?php foreach($materialinfo->result() as $rowmaterialinfo){ ?>
-                                                <option value="<?php echo $rowmaterialinfo->idtbl_material_info ?>"><?php echo $rowmaterialinfo->materialname.'-'.$rowmaterialinfo->materialinfocode ?></option>
-                                                <?php } ?>
-                                            </select>
-                                        </div>
-                                        <div class="col-1 mt-4">
-                                            <a href="<?php echo base_url() ?>Materialdetail" class="btn btn-primary btn-sm py-2 px-2 mt-2" <?php if($addcheck==0){echo 'disabled';} ?>>
-                                                <i class="fas fa-plus"></i>
-                                            </a>
+
+                                        <div class="form-group full-width">
+                                            <label class="small font-weight-bold">Remark</label>
+                                            <textarea name="remark" id="remark" class="form-control form-control-sm" rows="2"></textarea>
                                         </div>
                                     </div>
-                                    <div class="form-row mb-1">
-                                        <div class="col">
-                                            <label class="small font-weight-bold text-dark">Remark</label>
-                                            <textarea name="remark" id="remark" class="form-control form-control-sm"></textarea>
-                                        </div>
-                                    </div>                              
+
                                     <div class="form-group mt-2 text-right">
-                                        <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="far fa-save"></i>&nbsp;Add</button>
+                                        <button type="button" id="resetBtn" class="btn btn-secondary btn-sm px-4 mr-2">
+                                            <i class="fas fa-undo"></i>&nbsp;Reset
+                                        </button>
+                                        <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4"
+                                            <?php if($addcheck==0){echo 'disabled';} ?>><i class="far fa-save"></i>&nbsp;Add</button>
                                     </div>
                                     <input type="hidden" name="recordOption" id="recordOption" value="1" required>
                                     <input type="hidden" name="recordID" id="recordID" value="">
                                 </form>
                             </div>
-                            <div class="col-8">
+                        </div>
+                    </div>
+
+                    <!-- ================= TABLE CARD (bottom, full width) ================= -->
+                    <div class="erp-panel-table">
+                        <div class="card">
+                            <div class="card-header">Supplier List</div>
+                            <div class="card-body p-0 p-2">
                                 <div class="scrollbar pb-3" id="style-2">
                                     <table class="table table-bordered table-striped table-sm nowrap" id="dataTable">
                                         <thead>
@@ -128,6 +143,7 @@ include "include/topnavbar.php";
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </main>
@@ -206,11 +222,6 @@ include "include/topnavbar.php";
                 },
             ],
             ajax: {
-                url: "<?php echo base_url() ?>scripts/customerlist.php",
-                type: "POST", // you can use GET
-                // data: function(d) {}
-            },
-            ajax: {
                 url: "<?php echo base_url() ?>scripts/supplierlist.php",
                 type: "POST", // you can use GET
                 // data: function(d) {}
@@ -244,13 +255,13 @@ include "include/topnavbar.php";
                     "data": null,
                     "render": function(data, type, full) {
                         var button='';
-                        button+='<button class="btn btn-primary btn-sm btnEdit mr-1 ';if(editcheck!=1){button+='d-none';}button+='" id="'+full['idtbl_supplier']+'"><i class="fas fa-edit"></i></button>';
+                        button+='<button class="btn btn-primary btn-sm btnEdit mr-1 ';if(editcheck!=1){button+='d-none';}button+='" id="'+full['idtbl_supplier']+'" data-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></button>';
                         if(full['status']==1){
-                            button+='<a href="<?php echo base_url() ?>Supplier/Supplierstatus/'+full['idtbl_supplier']+'/2" onclick="return deactive_confirm()" target="_self" class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-check-square"></i></a>';
+                            button+='<a href="<?php echo base_url() ?>Supplier/Supplierstatus/'+full['idtbl_supplier']+'/2" onclick="return deactive_confirm()" target="_self" class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='" data-toggle="tooltip" title="Deactivate"><i class="fas fa-check-square"></i></a>';
                         }else{
-                            button+='<a href="<?php echo base_url() ?>Supplier/Supplierstatus/'+full['idtbl_supplier']+'/1" onclick="return active_confirm()" target="_self" class="btn btn-warning btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-times-circle"></i></a>';
+                            button+='<a href="<?php echo base_url() ?>Supplier/Supplierstatus/'+full['idtbl_supplier']+'/1" onclick="return active_confirm()" target="_self" class="btn btn-warning btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='" data-toggle="tooltip" title="Activate"><i class="fas fa-times-circle"></i></a>';
                         }
-                        button+='<a href="<?php echo base_url() ?>Supplier/Supplierstatus/'+full['idtbl_supplier']+'/3" onclick="return delete_confirm()" target="_self" class="btn btn-danger btn-sm ';if(deletecheck!=1){button+='d-none';}button+='"><i class="fas fa-trash-alt"></i></a>';
+                        button+='<a href="<?php echo base_url() ?>Supplier/Supplierstatus/'+full['idtbl_supplier']+'/3" onclick="return delete_confirm()" target="_self" class="btn btn-danger btn-sm ';if(deletecheck!=1){button+='d-none';}button+='" data-toggle="tooltip" title="Delete"><i class="fas fa-trash-alt"></i></a>';
                         
                         return button;
                     }
@@ -308,7 +319,27 @@ include "include/topnavbar.php";
                 });
             }
         });
+
+        $('#resetBtn').on('click', function() {
+            resetForm();
+        });
     });
+
+    function resetForm() {
+        $('#recordID').val('');
+        $('#recordOption').val('1');
+        $('#suppliername').val('');
+        $('#address').val('');
+        $('#country').val('');
+        $('#email').val('');
+        $('#primarycontact').val('');
+        $('#secondarycontact').val('');
+        $('#remark').val('');
+        $('#category').val(null).trigger('change');
+        $('#materialinfo').empty().trigger('change');
+        $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Add');
+        loadNextSupplierCode();
+    }
 
     function loadNextSupplierCode() {
         $.ajax({
