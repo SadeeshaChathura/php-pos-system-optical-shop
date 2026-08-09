@@ -113,6 +113,42 @@ else if($functionmenu=='CustomerPrescription'){
     $statuscheck=checkprivilege($menuprivilegearray, 18, 3);
     $deletecheck=checkprivilege($menuprivilegearray, 18, 4);
 }
+else if($functionmenu2=='SalesAgent'){
+    $addcheck=checkprivilege($menuprivilegearray, 19, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 19, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 19, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 19, 4);
+}
+else if($functionmenu2=='InventoryAgent'){
+    $addcheck=checkprivilege($menuprivilegearray, 20, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 20, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 20, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 20, 4);
+}
+else if($functionmenu2=='ChatAgent'){
+    $addcheck=checkprivilege($menuprivilegearray, 21, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 21, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 21, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 21, 4);
+}
+else if($functionmenu=='Expensetype'){
+    $addcheck=checkprivilege($menuprivilegearray, 22, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 22, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 22, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 22, 4);
+}
+else if($functionmenu=='Expense'){
+    $addcheck=checkprivilege($menuprivilegearray, 23, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 23, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 23, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 23, 4);
+}
+else if($functionmenu=='Wallet'){
+    $addcheck=checkprivilege($menuprivilegearray, 24, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 24, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 24, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 24, 4);
+}
 
 function checkprivilege($arraymenu, $menuID, $type){
     foreach($arraymenu as $array){
@@ -154,6 +190,33 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <span class="nav-link-text">Dashboard</span>
                 </a>
             </div>
+
+            <?php if(menucheck($menuprivilegearray, 19)==1 | menucheck($menuprivilegearray, 20)==1 | menucheck($menuprivilegearray, 21)==1){ ?>
+            <div class="sidenav-menu-heading">Agents</div>
+
+            <?php if(menucheck($menuprivilegearray, 19)==1){ ?>
+            <div class="sidenav-item" data-flyout-title="Sales Agent">
+                <a class="nav-link<?php if($controllermenu=="Aiagent" && $functionmenu2=="SalesAgent"){echo ' active';} ?>" data-title="Sales Agent" href="<?php echo base_url().'Aiagent/SalesAgent'; ?>">
+                    <div class="nav-link-icon"><i class="fas fa-robot"></i></div>
+                    <span class="nav-link-text">Sales Agent</span>
+                </a>
+            </div>
+            <?php } if(menucheck($menuprivilegearray, 20)==1){ ?>
+            <div class="sidenav-item" data-flyout-title="Inventory Agent">
+                <a class="nav-link<?php if($controllermenu=="Aiagent" && $functionmenu2=="InventoryAgent"){echo ' active';} ?>" data-title="Inventory Agent" href="<?php echo base_url().'Aiagent/InventoryAgent'; ?>">
+                    <div class="nav-link-icon"><i class="fas fa-brain"></i></div>
+                    <span class="nav-link-text">Inventory Agent</span>
+                </a>
+            </div>
+            <?php } if(menucheck($menuprivilegearray, 21)==1){ ?>
+            <div class="sidenav-item" data-flyout-title="Chat Assistant">
+                <a class="nav-link<?php if($controllermenu=="Aiagent" && $functionmenu2=="ChatAgent"){echo ' active';} ?>" data-title="Chat Assistant" href="<?php echo base_url().'Aiagent/ChatAgent'; ?>">
+                    <div class="nav-link-icon"><i class="fas fa-comments"></i></div>
+                    <span class="nav-link-text">Quantum AI</span>
+                </a>
+            </div>
+            <?php } } ?>
+            <!-- ================= END AI AGENTS ================= -->
 
             <?php if(menucheck($menuprivilegearray, 4)==1 | menucheck($menuprivilegearray, 15)==1){ ?>
             <div class="sidenav-menu-heading">Sales &amp; Billing</div>
@@ -232,6 +295,37 @@ function checkprivilege($arraymenu, $menuID, $type){
                 </nav>
             </div>
             <?php } ?>
+
+            <?php if(menucheck($menuprivilegearray, 24)==1 | menucheck($menuprivilegearray, 22)==1 | menucheck($menuprivilegearray, 23)==1){ ?>
+            <div class="sidenav-menu-heading">Finance</div>
+
+            <?php if(menucheck($menuprivilegearray, 24)==1){ ?>
+            <div class="sidenav-item" data-flyout-title="Business Wallet">
+                <a class="nav-link<?php if($controllermenu=="Wallet"){echo ' active';} ?>" data-title="Business Wallet" href="<?php echo base_url().'Wallet'; ?>">
+                    <div class="nav-link-icon"><i class="fas fa-wallet"></i></div>
+                    <span class="nav-link-text">Business Wallet</span>
+                </a>
+            </div>
+            <?php } ?>
+
+            <?php if(menucheck($menuprivilegearray, 22)==1 | menucheck($menuprivilegearray, 23)==1){ ?>
+            <div class="sidenav-item" data-flyout-title="Expenses">
+                <a class="nav-link collapsed" data-title="Expenses" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseExpense" aria-expanded="false" aria-controls="collapseExpense">
+                    <div class="nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <span class="nav-link-text">Expenses</span>
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+            </div>
+            <div class="collapse <?php if($controllermenu=="Expensetype" | $controllermenu=="Expense"){echo 'show';} ?>" id="collapseExpense" data-parent="#accordionSidenav">
+                <nav class="sidenav-menu-nested nav accordion">
+                    <?php if(menucheck($menuprivilegearray, 22)==1){ ?>
+                    <a class="nav-link<?php if($controllermenu=="Expensetype"){echo ' active';} ?>" href="<?php echo base_url().'Expensetype'; ?>">Expense Type</a>
+                    <?php } if(menucheck($menuprivilegearray, 23)==1){ ?>
+                    <a class="nav-link<?php if($controllermenu=="Expense"){echo ' active';} ?>" href="<?php echo base_url().'Expense'; ?>">Expenses</a>
+                    <?php } ?>
+                </nav>
+            </div>
+            <?php } } ?>
 
             <?php if(menucheck($menuprivilegearray, 5)==1 | menucheck($menuprivilegearray, 6)==1 | menucheck($menuprivilegearray, 18)==1){ ?>
             <div class="sidenav-menu-heading">Business Partners</div>

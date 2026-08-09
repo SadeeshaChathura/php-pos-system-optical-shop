@@ -840,6 +840,7 @@ html[data-color-mode="dark"] .dropdown-user-details-name {
   color: var(--erp-text) !important;
 }
 
+
 /* ==========================================================================
    THEME TRIGGER ICON ALIGNMENT
    --------------------------------------------------------------------------
@@ -863,3 +864,64 @@ html[data-color-mode="dark"] .dropdown-user-details-name {
   justify-content: center;
   line-height: 0;
 }
+
+/* ==========================================================================
+   DARK MODE — AGENT INSIGHT PANELS (Sales Agent / Inventory Agent)
+   --------------------------------------------------------------------------
+   .insight-item's background comes from inline PHP styles ($typeColors[...]
+   ['bg']) which are always light pastel hex values (#fdeaea, #fff7e0,
+   #e8f8ee, #eef6fb) — never tokenized, so they never picked up dark mode.
+   Meanwhile .insight-text uses var(--erp-text), which we redefine to a
+   near-white color for dark mode — giving near-white text on a light
+   pastel background, i.e. invisible. The icon and border-left-color stay
+   fine since those use the inline $c['fg'] hex directly, not a token.
+
+   Fix: override the background to a dark neutral in dark mode. The
+   border-left-color (still the inline fg hex) keeps the per-type tint
+   (red/yellow/green/blue) as a visual cue, and insight-text's existing
+   var(--erp-text) now reads correctly against the dark background.
+   ========================================================================== */
+html[data-color-mode="dark"] .insight-item {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ==========================================================================
+   DARK MODE — BUSINESS WALLET (wallet.php)
+   --------------------------------------------------------------------------
+   wallet.php ships its own inline <style> block, same pattern as the
+   PO/GRN print cards and Agent insight panels — hardcoded hex colors
+   (.wallet-stat-card border #e3e6f0, .stat-label #858796, .stat-value
+   #2c3e50, .wallet-progress track) with nothing tokenized, so none of
+   the generic dark-mode rules above ever reached them. The hero cards
+   (.wallet-hero / bg-cash / bg-bank / bg-total) are untouched here on
+   purpose — they're solid gradients with white text and already read
+   fine against a dark page in either mode.
+   ========================================================================== */
+
+html[data-color-mode="dark"] .wallet-stat-card {
+  background-color: var(--erp-surface) !important;
+  border-color: var(--erp-border) !important;
+}
+html[data-color-mode="dark"] .stat-label {
+  color: var(--erp-text-muted) !important;
+}
+html[data-color-mode="dark"] .stat-value {
+  color: var(--erp-text) !important;
+}
+html[data-color-mode="dark"] .wallet-section-title {
+  color: #8fc2ff !important;
+}
+
+/* Progress track: Bootstrap's default .progress background (#e9ecef)
+   is hardcoded in bootstrap.css itself, not in wallet.php, but it's
+   the same "light grey track on dark page" problem — scoped to
+   .wallet-progress specifically so it doesn't affect progress bars
+   elsewhere in the app that may rely on the default look. */
+html[data-color-mode="dark"] .wallet-progress {
+  background-color: #1b2532 !important;
+}
+
+/* wallet-flow-in / wallet-flow-out / wallet-net-positive / wallet-net-negative
+   are intentionally left alone — their green (#1cc88a) and red (#e74a3b)
+   already have enough contrast against a dark surface and match the
+   text-success/text-danger treatment used elsewhere in dark mode. */

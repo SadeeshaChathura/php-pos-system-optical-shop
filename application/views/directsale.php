@@ -1211,7 +1211,7 @@ $('#btnPayCard').on('click', function(){
 $('#cardLast4').on('input', function(){ $(this).val($(this).val().replace(/\D/g,'').slice(0,4)); });
 
 $('#btnCompleteCard').on('click', function(){
-    var net      = parseFloat($('#cardDueAmt').text().replace(/[^0-9.]/g,'')) || 0;
+    var net      = parseMoney($('#cardDueAmt').text());
     var last4    = $('#cardLast4').val();
     var cardType = $('#cardType').val();
     if (last4.length !== 4) { posToast('fas fa-exclamation-triangle', '', 'Enter the last 4 digits of the card', 'danger'); return; }

@@ -443,9 +443,6 @@ class Directsaleinfo extends CI_Model {
 
         if ($billtype == 4) {
             // ADVANCE / PRODUCTION ORDER
-            // FIX: this branch was previously missing, so tbl_invoice.paymentgiven
-            // stayed 0 even though an advance payment was recorded in
-            // tbl_invoice_payment. Store the actual amount collected now.
             $paymentgiven = $paytotal;
             $changegiven  = 0; // no change given on advance orders
         }
@@ -467,10 +464,6 @@ class Directsaleinfo extends CI_Model {
             'invtype'                                 => ($billtype == 3 || $billtype == 4) ? 2 : 1,
             'ordertype'                               => ($billtype == 4) ? 2 : 1,
             'duedate'                                 => ($billtype == 4) ? $duedate : null,
-            // FIX: if the advance/credit amount collected now already covers
-            // the full total, mark it settled immediately and stamp
-            // completeddate — otherwise this order would sit in "Pending
-            // Advance Orders" forever with nothing left to collect.
             'completeddate'                           => $paidInFullNow ? $insertdatetime : null,
             'paycomplete'                             => $paycomplete,
             'paymentgiven'                            => $paymentgiven,
@@ -540,12 +533,17 @@ class Directsaleinfo extends CI_Model {
         // =========================
         if ($billtype == 1 || $billtype == 2 || $billtype == 4 || ($billtype == 3 && $paytotal > 0)) {
 
+            // FIX: strip change handed back to the customer before recording
+            // anything as "received". $changegiven is always 0 for card/credit/
+            // advance sales, so this only changes behavior for cash sales —
+            // it's the amount that actually stays in the drawer / applies
+            // to the invoice, not the amount the customer physically handed over.
+            $appliedAmount = $paytotal - $changegiven;
+
             $paymentData = array(
                 'paydate'                                 => date('Y-m-d'),
-                'nettotal'                                => $paytotal,   // FIX: record the amount actually collected now,
-                                                                            // not the full invoice nettotal — matters for
-                                                                            // partial advance payments and credit advances.
-                'balance'                                 => max(0, $nettotal - $paytotal),
+                'nettotal'                                => $appliedAmount,              // FIX: was $paytotal
+                'balance'                                 => max(0, $nettotal - $appliedAmount),
                 'status'                                  => 1,
                 'insertdatetime'                          => $insertdatetime,
                 'tbl_user_idtbl_user'                     => $userID,
@@ -563,22 +561,39 @@ class Directsaleinfo extends CI_Model {
 
             if (!empty($tableDataPay) && is_array($tableDataPay)) {
 
+                // FIX: change comes out of drawer cash, so strip it from the
+                // Cash-method row(s) specifically — Card/Cheque rows are exact,
+                // no change is ever given back on those. If there are multiple
+                // cash rows (rare, but the table supports it), the change is
+                // subtracted across them in order until fully accounted for.
+                $changeRemaining = $changegiven;
+
                 foreach ($tableDataPay as $rowPay) {
 
+                    $methodCode = (($billtype == 4 || $billtype == 3) && isset($rowPay['col_1']) && $rowPay['col_1'] === 'Card')
+                                    ? 2
+                                    : (($billtype == 4 || $billtype == 3) ? 1 : $billtype);
+
+                    $lineAmount = isset($rowPay['col_6']) ? (float)$rowPay['col_6'] : $paytotal;
+
+                    // Only strip change from CASH rows (method 1)
+                    if ($methodCode == 1 && $changeRemaining > 0) {
+                        $strip = min($changeRemaining, $lineAmount);
+                        $lineAmount      -= $strip;
+                        $changeRemaining -= $strip;
+                    }
+
                     $paymentDetail = array(
-                        'method' => (($billtype == 4 || $billtype == 3) && isset($rowPay['col_1']) && $rowPay['col_1'] === 'Card')
-                                        ? 2
-                                        : (($billtype == 4 || $billtype == 3) ? 1 : $billtype),
-                        'amount' => isset($rowPay['col_6']) ? $rowPay['col_6'] : $paytotal, // FIX: use the actual
-                                                                                              // line amount, not nettotal
-                        'bank'   => isset($rowPay['col_2']) ? $rowPay['col_2'] : '',
-                        'branch' => isset($rowPay['col_3']) ? $rowPay['col_3'] : '',
-                        'chequeno'   => isset($rowPay['col_4']) ? $rowPay['col_4'] : '',
-                        'chequedate' => isset($rowPay['col_5']) ? $rowPay['col_5'] : '',
-                        'status'     => 1,
-                        'insertdatetime' => $insertdatetime,
-                        'tbl_user_idtbl_user' => $userID,
-                        'tbl_invoice_payment_idtbl_invoice_payment' => $invoicepayID,
+                        'method'                                     => $methodCode,
+                        'amount'                                      => $lineAmount, // FIX: net of change given back
+                        'bank'                                        => isset($rowPay['col_2']) ? $rowPay['col_2'] : '',
+                        'branch'                                      => isset($rowPay['col_3']) ? $rowPay['col_3'] : '',
+                        'chequeno'                                    => isset($rowPay['col_4']) ? $rowPay['col_4'] : '',
+                        'chequedate'                                  => isset($rowPay['col_5']) ? $rowPay['col_5'] : '',
+                        'status'                                      => 1,
+                        'insertdatetime'                              => $insertdatetime,
+                        'tbl_user_idtbl_user'                         => $userID,
+                        'tbl_invoice_payment_idtbl_invoice_payment'   => $invoicepayID,
                     );
 
                     $this->db->insert('tbl_invoice_payment_detail', $paymentDetail);
@@ -717,7 +732,7 @@ class Directsaleinfo extends CI_Model {
 
         $invoiceID = $this->input->post('invoiceID');
         $amount    = (float) $this->input->post('amount');
-        $method    = $this->input->post('method');      // 'Cash' or 'Card'
+        $method    = $this->input->post('method');
         $cardType  = $this->input->post('cardType');
         $cardLast4 = $this->input->post('cardLast4');
 
@@ -732,13 +747,24 @@ class Directsaleinfo extends CI_Model {
             return;
         }
 
+        // FIX: work out what's actually still owed BEFORE this payment,
+        // so we can record the true remaining balance AFTER it.
+        $sqlPaidSoFarBefore = "SELECT IFNULL(SUM(p.nettotal),0) AS total
+                        FROM tbl_invoice_payment p
+                        JOIN tbl_invoice_payment_has_tbl_invoice ph
+                            ON ph.tbl_invoice_payment_idtbl_invoice_payment = p.idtbl_invoice_payment
+                        WHERE ph.tbl_invoice_idtbl_invoice = ?";
+        $paidBefore = (float) $this->db->query($sqlPaidSoFarBefore, array($invoiceID))->row()->total;
+
+        $remainingBalance = max(0, $invoice->nettotal - $paidBefore - $amount);
+
         $insertdatetime = date('Y-m-d H:i:s');
         $methodCode = ($method === 'Card') ? 2 : 1;
 
         $paymentData = array(
             'paydate'                                 => date('Y-m-d'),
             'nettotal'                                => $amount,
-            'balance'                                 => 0,
+            'balance'                                 => $remainingBalance, // FIX: real remaining balance, not hardcoded 0
             'status'                                  => 1,
             'insertdatetime'                          => $insertdatetime,
             'tbl_user_idtbl_user'                     => $userID,
@@ -766,13 +792,7 @@ class Directsaleinfo extends CI_Model {
             'tbl_invoice_payment_idtbl_invoice_payment'  => $paymentID,
         ));
 
-        // Recompute whether this fully settles the invoice
-        $sqlPaidSoFar = "SELECT SUM(p.nettotal) AS total
-                        FROM tbl_invoice_payment p
-                        JOIN tbl_invoice_payment_has_tbl_invoice ph
-                            ON ph.tbl_invoice_payment_idtbl_invoice_payment = p.idtbl_invoice_payment
-                        WHERE ph.tbl_invoice_idtbl_invoice = ?";
-        $paidSoFar = (float) $this->db->query($sqlPaidSoFar, array($invoiceID))->row()->total;
+        $paidSoFar = $paidBefore + $amount;
 
         $updateData = array(
             'paymentgiven' => $paidSoFar,
@@ -791,7 +811,7 @@ class Directsaleinfo extends CI_Model {
             $obj->success   = true;
             $obj->invoiceid = $invoiceID;
             $obj->settled   = ($paidSoFar >= $invoice->nettotal) ? 1 : 0;
-            $obj->remaining = max(0, $invoice->nettotal - $paidSoFar);
+            $obj->remaining = $remainingBalance;
         } else {
             $this->db->trans_rollback();
             $obj->success = false;
