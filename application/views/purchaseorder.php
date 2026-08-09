@@ -44,6 +44,40 @@ include "include/topnavbar.php";
                         </div>
                     </div>
                 </div>
+                <div class="card mt-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <span><i class="fas fa-exclamation-triangle text-warning mr-2"></i>Reorder Suggestions</span>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnrefreshreorder">
+                            <i class="fas fa-sync mr-1"></i>Refresh
+                        </button>
+                    </div>
+                    <div class="card-body p-0 p-2">
+                        <div class="scrollbar pb-3" id="style-2">
+                            <table class="table table-bordered table-striped table-sm nowrap" id="reorderTable">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="checkallreorder"></th>
+                                        <th>Material</th>
+                                        <th>Category</th>
+                                        <th class="text-center">Current Stock</th>
+                                        <th class="text-center">Reorder Level</th>
+                                        <th class="text-center">Suggested Qty</th>
+                                        <th class="text-right">Unit Price</th>
+                                        <th>Supplier</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reorderTableBody">
+                                    <tr><td colspan="8" class="text-center text-muted">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button type="button" class="btn btn-primary btn-sm px-4" id="btngenerateauto" <?php if($addcheck==0){echo 'disabled';} ?>>
+                            <i class="fas fa-magic mr-1"></i>Generate Purchase Order(s)
+                        </button>
+                    </div>
+                </div>
             </div>
         </main>
         <?php include "include/footerbar.php"; ?>
@@ -421,6 +455,135 @@ include "include/topnavbar.php";
             }
 
         });
+
+        function loadReorderSuggestions() {
+            $('#reorderTableBody').html('<tr><td colspan="8" class="text-center text-muted">Loading...</td></tr>');
+
+            $.ajax({
+                type: "POST",
+                url: '<?php echo base_url() ?>Purchaseorder/Reorderpointitems',
+                success: function (result) {
+                    var items = JSON.parse(result);
+
+                    if (items.length === 0) {
+                        $('#reorderTableBody').html('<tr><td colspan="8" class="text-center text-muted">No materials are at/below their reorder level right now.</td></tr>');
+                        return;
+                    }
+
+                    var html = '';
+                    items.forEach(function (row) {
+                        html += '<tr data-materialid="' + row.idtbl_material_info + '">';
+                        html += '<td><input type="checkbox" class="chkreorderitem"></td>';
+                        html += '<td>' + row.materialname + '<br><small class="text-muted">' + row.materialinfocode + '</small></td>';
+                        html += '<td>' + (row.categoryname || '-') + '</td>';
+                        html += '<td class="text-center">' + row.currentstock + '</td>';
+                        html += '<td class="text-center">' + row.reorderlevel + '</td>';
+                        html += '<td class="text-center"><input type="text" class="form-control form-control-sm text-center suggestedqty" value="' + row.suggestedqty + '"></td>';
+                        html += '<td class="text-right"><input type="text" class="form-control form-control-sm text-right unitprice" value="' + row.lastunitprice + '"></td>';
+                        html += '<td><select class="form-control form-control-sm supplierselect"><option value="">Loading...</option></select></td>';
+                        html += '</tr>';
+                    });
+
+                    $('#reorderTableBody').html(html);
+
+                    // populate supplier dropdown per row
+                    $('#reorderTableBody tr').each(function () {
+                        var $row = $(this);
+                        var materialID = $row.data('materialid');
+                        var preselect = items.find(i => i.idtbl_material_info == materialID);
+
+                        $.ajax({
+                            type: "POST",
+                            data: { recordID: materialID },
+                            url: '<?php echo base_url() ?>Purchaseorder/Getsuppliersformaterial',
+                            success: function (result2) {
+                                var suppliers = JSON.parse(result2);
+                                var opts = '<option value="">Select Supplier</option>';
+                                suppliers.forEach(function (s) {
+                                    var selected = (preselect && preselect.lastsupplierid == s.idtbl_supplier) ? 'selected' : '';
+                                    opts += '<option value="' + s.idtbl_supplier + '" ' + selected + '>' + s.suppliername + '</option>';
+                                });
+                                $row.find('.supplierselect').html(opts);
+                            }
+                        });
+                    });
+                }
+            });
+        }
+
+        $('#btnrefreshreorder').click(function () {
+            loadReorderSuggestions();
+        });
+
+        $('#checkallreorder').change(function () {
+            $('.chkreorderitem').prop('checked', $(this).is(':checked'));
+        });
+
+        $('#btngenerateauto').click(function () {
+            var checkedRows = $('.chkreorderitem:checked').closest('tr');
+
+            if (checkedRows.length === 0) {
+                alert('Please select at least one item.');
+                return;
+            }
+
+            var groupsBySupplier = {};
+            var missingSupplier = false;
+
+            checkedRows.each(function () {
+                var $row = $(this);
+                var supplierID = $row.find('.supplierselect').val();
+                var materialID = $row.data('materialid');
+                var qty = parseFloat($row.find('.suggestedqty').val());
+                var unitprice = parseFloat($row.find('.unitprice').val());
+
+                if (!supplierID) {
+                    missingSupplier = true;
+                    return;
+                }
+
+                if (!groupsBySupplier[supplierID]) {
+                    groupsBySupplier[supplierID] = [];
+                }
+
+                groupsBySupplier[supplierID].push({
+                    materialID: materialID,
+                    qty: qty,
+                    unitprice: unitprice,
+                    comment: 'Auto reorder'
+                });
+            });
+
+            if (missingSupplier) {
+                alert('One or more selected items have no supplier chosen. Please select a supplier for each checked row.');
+                return;
+            }
+
+            var groups = [];
+            Object.keys(groupsBySupplier).forEach(function (supplierID) {
+                groups.push({ supplier: supplierID, items: groupsBySupplier[supplierID] });
+            });
+
+            $('#btngenerateauto').prop('disabled', true).html('<i class="fas fa-circle-notch fa-spin mr-2"></i>Generating...');
+
+            $.ajax({
+                type: "POST",
+                data: { groups: groups },
+                url: '<?php echo base_url() ?>Purchaseorder/Autocreatepo',
+                success: function (result) {
+                    var obj = JSON.parse(result);
+                    action(obj.action);
+                    $('#btngenerateauto').prop('disabled', false).html('<i class="fas fa-magic mr-1"></i>Generate Purchase Order(s)');
+                    if (obj.status == 1) {
+                        loadReorderSuggestions();
+                        $('#dataTable').DataTable().ajax.reload();
+                    }
+                }
+            });
+        });
+
+        // initial load
+        loadReorderSuggestions();
     });
 
     function printpos() {

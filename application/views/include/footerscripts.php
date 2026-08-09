@@ -1,16 +1,11 @@
-<!--<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>-->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/scripts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-<!-- <script src="<?php echo base_url() ?>assets/demo/chart-area-demo.js"></script> -->
-<!--<script src="<?php echo base_url() ?>assets/demo/chart-bar-demo.js"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Mottie-Keyboard/1.30.1/js/jquery.keyboard.min.js"></script>
-<!-- <script src="https://cdn.datatables.net/fixedcolumns/3.3.3/js/dataTables.fixedColumns.min.js"></script> -->
-<!--<script src="<?php echo base_url() ?>assets/demo/datatables-demo.js"></script>-->
 <script src="<?php echo base_url() ?>assets/js/script.js"></script>
 <script src="<?php echo base_url() ?>assets/js/bootstrap-notify.js"></script>
 <script src="<?php echo base_url() ?>assets/js/select2.full.js"></script>
@@ -26,6 +21,7 @@
 <script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.print.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script>
     AOS.init({
       duration: 1000, // Animation duration in milliseconds

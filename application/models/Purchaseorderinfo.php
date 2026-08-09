@@ -15,6 +15,209 @@ class Purchaseorderinfo extends CI_Model{
 
         echo json_encode($respond->result());
     }
+
+    /**
+     * Returns all active materials whose current stock is at/below their
+     * reorderlevel (materials with reorderlevel = 0 are excluded, since
+     * that's treated as "not tracked").
+     */
+    public function Getreorderpointitems(){
+        $sql = "SELECT
+                    mi.idtbl_material_info,
+                    mi.materialinfocode,
+                    mi.materialname,
+                    mi.reorderlevel,
+                    mc.categoryname,
+                    COALESCE(s.currentstock, 0) AS currentstock,
+                    COALESCE(recent.lastunitprice, 0) AS lastunitprice,
+                    recent.tbl_supplier_idtbl_supplier AS lastsupplierid,
+                    recent.suppliername AS lastsuppliername
+                FROM tbl_material_info mi
+                LEFT JOIN tbl_material_category mc
+                    ON mc.idtbl_material_category = mi.tbl_material_category_idtbl_material_category
+                LEFT JOIN (
+                    SELECT tbl_material_info_idtbl_material_info, SUM(qty) AS currentstock
+                    FROM tbl_stock
+                    WHERE status = 1
+                    GROUP BY tbl_material_info_idtbl_material_info
+                ) s ON s.tbl_material_info_idtbl_material_info = mi.idtbl_material_info
+                LEFT JOIN (
+                    SELECT gd.tbl_material_info_idtbl_material_info,
+                           gd.unitprice AS lastunitprice,
+                           g.tbl_supplier_idtbl_supplier,
+                           sup.suppliername
+                    FROM tbl_grndetail gd
+                    INNER JOIN tbl_grn g ON g.idtbl_grn = gd.tbl_grn_idtbl_grn
+                    INNER JOIN tbl_supplier sup ON sup.idtbl_supplier = g.tbl_supplier_idtbl_supplier
+                    INNER JOIN (
+                        SELECT gd2.tbl_material_info_idtbl_material_info, MAX(gd2.idtbl_grndetail) AS maxid
+                        FROM tbl_grndetail gd2
+                        WHERE gd2.status = 1
+                        GROUP BY gd2.tbl_material_info_idtbl_material_info
+                    ) latest ON latest.tbl_material_info_idtbl_material_info = gd.tbl_material_info_idtbl_material_info
+                            AND latest.maxid = gd.idtbl_grndetail
+                    WHERE gd.status = 1
+                ) recent ON recent.tbl_material_info_idtbl_material_info = mi.idtbl_material_info
+                WHERE mi.status = 1
+                  AND mi.reorderlevel > 0
+                  AND COALESCE(s.currentstock, 0) <= mi.reorderlevel
+                ORDER BY (mi.reorderlevel - COALESCE(s.currentstock,0)) DESC";
+
+        $respond = $this->db->query($sql);
+
+        $rows = $respond->result();
+
+        foreach($rows as $row){
+            $row->suggestedqty = ($row->reorderlevel * 2) - $row->currentstock;
+            if($row->suggestedqty < 1){
+                $row->suggestedqty = $row->reorderlevel;
+            }
+
+            // If this material was never received before, fall back to
+            // any supplier currently linked to it.
+            if(empty($row->lastsupplierid)){
+                $fallback = $this->db->query(
+                    "SELECT sup.idtbl_supplier, sup.suppliername
+                     FROM tbl_supplier sup
+                     INNER JOIN tbl_supplier_has_tbl_material_info smi
+                        ON smi.tbl_supplier_idtbl_supplier = sup.idtbl_supplier
+                     WHERE smi.tbl_material_info_idtbl_material_info = ?
+                       AND sup.status = 1
+                     LIMIT 1",
+                    array($row->idtbl_material_info)
+                )->row();
+
+                $row->lastsupplierid = $fallback ? $fallback->idtbl_supplier : null;
+                $row->lastsuppliername = $fallback ? $fallback->suppliername : null;
+            }
+        }
+
+        echo json_encode($rows);
+    }
+
+    /**
+     * All active suppliers linked to a given material, for the supplier
+     * dropdown on the reorder-suggestions row.
+     */
+    public function Getsuppliersformaterial(){
+        $recordID = $this->input->post('recordID');
+
+        $sql = "SELECT sup.idtbl_supplier, sup.suppliername
+                FROM tbl_supplier sup
+                INNER JOIN tbl_supplier_has_tbl_material_info smi
+                    ON smi.tbl_supplier_idtbl_supplier = sup.idtbl_supplier
+                WHERE smi.tbl_material_info_idtbl_material_info = ?
+                  AND sup.status = 1";
+
+        $respond = $this->db->query($sql, array($recordID));
+
+        echo json_encode($respond->result());
+    }
+
+    /**
+     * Creates one Purchase Order per supplier group, exactly like the
+     * manual flow in Purchaseorderinsertupdate(), but driven from the
+     * reorder-suggestions screen. Expects POST 'groups' as:
+     * [{ supplier: id, items: [{ materialID, qty, unitprice, comment }] }]
+     */
+    public function Autocreatepo(){
+        $this->db->trans_begin();
+
+        $userID = $_SESSION['userid'];
+        $groups = $this->input->post('groups');
+        $updatedatetime = date('Y-m-d H:i:s');
+        $today = date('Y-m-d');
+
+        $createdCount = 0;
+
+        foreach($groups as $group){
+            $supplierID = $group['supplier'];
+            $items = $group['items'];
+
+            if(empty($supplierID) || empty($items)){
+                continue;
+            }
+
+            $subtotal = 0;
+            foreach($items as $it){
+                $subtotal += (float)$it['qty'] * (float)$it['unitprice'];
+            }
+
+            $data = array(
+                'orderdate'      => $today,
+                'duedate'        => $today,
+                'subtotal'       => $subtotal,
+                'discount'       => '0',
+                'discountamount' => '0',
+                'nettotal'       => $subtotal,
+                'confirmstatus'  => '0',
+                'grnconfirm'     => '0',
+                'remark'         => 'Auto-generated: Reorder Point Suggestion',
+                'status'         => '1',
+                'insertdatetime' => $updatedatetime,
+                'tbl_supplier_idtbl_supplier' => $supplierID,
+                'tbl_user_idtbl_user'         => $userID
+            );
+
+            $this->db->insert('tbl_porder', $data);
+            $porderID = $this->db->insert_id();
+
+            foreach($items as $it){
+                $dataone = array(
+                    'qty'             => $it['qty'],
+                    'unitprice'       => $it['unitprice'],
+                    'discount'        => '0',
+                    'discountamount'  => '0',
+                    'comment'         => isset($it['comment']) ? $it['comment'] : 'Auto reorder',
+                    'status'          => '1',
+                    'insertdatetime'  => $updatedatetime,
+                    'tbl_porder_idtbl_porder' => $porderID,
+                    'tbl_material_info_idtbl_material_info' => $it['materialID']
+                );
+
+                $this->db->insert('tbl_porder_detail', $dataone);
+            }
+
+            $createdCount++;
+        }
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === TRUE && $createdCount > 0) {
+            $this->db->trans_commit();
+
+            $actionObj = new stdClass();
+            $actionObj->icon = 'fas fa-save';
+            $actionObj->title = '';
+            $actionObj->message = $createdCount . ' Purchase Order(s) Created from Reorder Suggestions';
+            $actionObj->url = '';
+            $actionObj->target = '_blank';
+            $actionObj->type = 'success';
+
+            $obj = new stdClass();
+            $obj->status = 1;
+            $obj->action = json_encode($actionObj);
+
+            echo json_encode($obj);
+        } else {
+            $this->db->trans_rollback();
+
+            $actionObj = new stdClass();
+            $actionObj->icon = 'fas fa-exclamation-triangle';
+            $actionObj->title = '';
+            $actionObj->message = 'No Purchase Orders Created';
+            $actionObj->url = '';
+            $actionObj->target = '_blank';
+            $actionObj->type = 'danger';
+
+            $obj = new stdClass();
+            $obj->status = 0;
+            $obj->action = json_encode($actionObj);
+
+            echo json_encode($obj);
+        }
+    }
+
     public function Purchaseorderinsertupdate(){
         $this->db->trans_begin();
 

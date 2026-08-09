@@ -1373,3 +1373,22 @@ body.pos-fullscreen-page main {
 		grid-template-columns: 1fr 340px;
 	}
 }
+
+.pos-barcode-box.scan-ok {
+	background: #eafaf1 !important;
+	box-shadow: 0 0 0 2px var(--success) !important;
+	transition: all .15s;
+}
+.pos-barcode-box.scan-ok input {
+	background: #eafaf1;
+	border-color: var(--success);
+}
+.pos-barcode-box.scan-fail {
+	background: #fdecea !important;
+	box-shadow: 0 0 0 2px var(--danger) !important;
+	transition: all .15s;
+}
+.pos-barcode-box.scan-fail input {
+	background: #fdecea;
+	border-color: var(--danger);
+}

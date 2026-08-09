@@ -36,4 +36,8 @@ class Materialdetail extends CI_Controller {
         $code = $this->Materialdetailinfo->generateMaterialCode();
         echo json_encode(array('code' => $code));
     }
+    public function Getbarcodedata(){
+        $this->load->model('Materialdetailinfo');
+        $result = $this->Materialdetailinfo->Getbarcodedata();
+    }
 }

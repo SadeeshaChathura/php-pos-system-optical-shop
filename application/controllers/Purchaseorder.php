@@ -34,5 +34,17 @@ class Purchaseorder extends CI_Controller {
 	public function Getporderprintpdf($x){
 		$this->load->model('Purchaseorderprintinfo');
 		$result = $this->Purchaseorderprintinfo->Getporderprintpdf($x);
-}
+	}
+	public function Reorderpointitems(){
+		$this->load->model('Purchaseorderinfo');
+		$result = $this->Purchaseorderinfo->Getreorderpointitems();
+	}
+	public function Getsuppliersformaterial(){
+		$this->load->model('Purchaseorderinfo');
+		$result = $this->Purchaseorderinfo->Getsuppliersformaterial();
+	}
+	public function Autocreatepo(){
+		$this->load->model('Purchaseorderinfo');
+		$result = $this->Purchaseorderinfo->Autocreatepo();
+	}
 }

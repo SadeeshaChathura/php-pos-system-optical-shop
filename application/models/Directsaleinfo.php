@@ -72,13 +72,6 @@ class Directsaleinfo extends CI_Model {
 
             $productID = $row->idtbl_material_info;
 
-            /*
-             * FIX: SUM qty across ALL batches so a product with one empty
-             * batch and one non-empty batch is never shown as out of stock.
-             * saleprice and batchno are taken from the FIRST batch that
-             * still has qty > 0 (used only as the display price on the
-             * product card — the batch picker lets the cashier choose later).
-             */
             $sqlstockcheck = "
                 SELECT
                     SUM(`qty`) AS sumqty,
@@ -100,7 +93,6 @@ class Directsaleinfo extends CI_Model {
                 $batchno    = $stockRespond->row(0)->batchno;
             }
 
-            // Apply stock filter against the true total qty across all batches
             if ($stockFilter === 'in'  && !($stockcount > 5))               continue;
             if ($stockFilter === 'low' && !($stockcount > 0 && $stockcount <= 5)) continue;
             if ($stockFilter === 'out' && !($stockcount <= 0))              continue;
@@ -130,9 +122,18 @@ class Directsaleinfo extends CI_Model {
         echo json_encode($respond->result());
     }
 
+    /**
+     * Barcode lookup used by the POS scan box.
+     * Matches against the manually-entered `barcode` field first,
+     * and falls back to `materialinfocode` — this covers items that
+     * were labeled/printed before a barcode value was ever typed in,
+     * since printed labels default to materialinfocode in that case.
+     * Also returns batchcount so the front-end can skip the batch
+     * picker modal when there's only one active batch to sell from.
+     */
     public function Getproductlistaccobarcode(){
 
-        $barcode = $this->input->post('barcode');
+        $barcode = trim($this->input->post('barcode'));
 
         $this->db->select("
             `tbl_material_info`.`idtbl_material_info`,
@@ -141,8 +142,11 @@ class Directsaleinfo extends CI_Model {
             `tbl_material_info`.`barcode`
         ");
         $this->db->from('tbl_material_info');
-        $this->db->where('tbl_material_info.barcode', $barcode);
         $this->db->where('tbl_material_info.status', 1);
+        $this->db->group_start();
+            $this->db->where('tbl_material_info.barcode', $barcode);
+            $this->db->or_where('tbl_material_info.materialinfocode', $barcode);
+        $this->db->group_end();
         $respond = $this->db->get();
 
         $obj = new stdClass();
@@ -155,10 +159,6 @@ class Directsaleinfo extends CI_Model {
 
         $productID = $respond->row(0)->idtbl_material_info;
 
-        /*
-         * Same fix as Getproductlist: SUM across all batches so a product
-         * with one zero-qty batch and one non-zero batch is not blocked.
-         */
         $sqlstockcheck = "
             SELECT
                 SUM(`qty`) AS sumqty,
@@ -170,6 +170,15 @@ class Directsaleinfo extends CI_Model {
         ";
         $stockRespond = $this->db->query($sqlstockcheck, array($productID));
 
+        $sqlbatchcount = "
+            SELECT COUNT(*) AS cnt
+            FROM `tbl_stock`
+            WHERE `tbl_material_info_idtbl_material_info` = ?
+              AND `status` = 1
+              AND `qty` > 0
+        ";
+        $batchcountRespond = $this->db->query($sqlbatchcount, array($productID));
+
         $obj->found       = true;
         $obj->id          = $productID;
         $obj->productcode = $respond->row(0)->materialinfocode;
@@ -177,6 +186,8 @@ class Directsaleinfo extends CI_Model {
         $obj->barcode     = $respond->row(0)->barcode;
         $obj->price       = !empty($stockRespond->row(0)->saleprice) ? (float)$stockRespond->row(0)->saleprice : 0;
         $obj->stock       = !empty($stockRespond->row(0)->sumqty)    ? (float)$stockRespond->row(0)->sumqty    : 0;
+        $obj->batchcount  = (int) $batchcountRespond->row(0)->cnt;
+        $obj->batchno     = !empty($stockRespond->row(0)->batchno) ? $stockRespond->row(0)->batchno : '';
 
         echo json_encode($obj);
     }
@@ -309,8 +320,6 @@ class Directsaleinfo extends CI_Model {
             return;
         }
 
-        // Reuse the same code-generation logic used in Customer > Add Customer,
-        // based on the actual customercode values, not the auto-increment ID.
         $this->load->model('Customerinfo');
         $customercode = $this->Customerinfo->generateCustomerCode();
 
@@ -343,19 +352,7 @@ class Directsaleinfo extends CI_Model {
 
     /* =========================================================
      * Sale insert / update
-     * =========================================================
-     * billtype: 1 = Cash, 2 = Card, 3 = Credit
-     *
-     * Payment table columns (col_1 … col_6):
-     *   col_1 = method (Cash / Card)
-     *   col_2 = bank / card type
-     *   col_3 = branch
-     *   col_4 = chequeno / last 4 digits
-     *   col_5 = chequedate
-     *   col_6 = amount
-     *
-     * warrantystatus: '1' if Lifetime Warranty checkbox ticked, else '0'.
-     */
+     * ========================================================= */
     public function Directsaleinsertupdate()
     {
         $this->db->trans_begin();
@@ -375,12 +372,11 @@ class Directsaleinfo extends CI_Model {
         $priceeditstatus = $this->input->post('priceeditstatus');
         $billapproveuser = $this->input->post('billapproveuser');
         $warrantystatus  = $this->input->post('warrantystatus');
-        $ordertype       = $this->input->post('ordertype'); // 1 normal, 2 advance order
-        $duedate         = $this->input->post('duedate');    // 'YYYY-MM-DD' or null
+        $ordertype       = $this->input->post('ordertype');
+        $duedate         = $this->input->post('duedate');
 
         if (empty($ordertype)) $ordertype = 1;
 
-        // Advance Order requires a saved customer + a due date, just like Credit
         if ($billtype == 4 && ($customer == 1 || empty($duedate))) {
             $obj = new stdClass();
             $obj->actiontype = '0';
@@ -416,41 +412,27 @@ class Directsaleinfo extends CI_Model {
         $insertdatetime = date('Y-m-d H:i:s');
         $invdate        = date('Y-m-d H:i:s');
 
-        // Whether this invoice is fully paid right at creation time.
-        // For Cash/Card this is always true. For Credit/Advance it depends
-        // on whether the amount collected now (paytotal) already covers
-        // the full nettotal.
         $paidInFullNow = ($paytotal >= $nettotal) ? 1 : 0;
         $paycomplete   = $paidInFullNow;
 
-        // =========================
-        // PAYMENT LOGIC (per billtype)
-        // =========================
         $paymentgiven = 0;
         $changegiven  = 0;
 
         if ($billtype == 1) {
-            // CASH
             $paymentgiven = $paytotal;
             $changegiven  = max(0, $paytotal - $nettotal);
         }
 
         if ($billtype == 2) {
-            // CARD
             $paymentgiven = $nettotal;
             $changegiven  = 0;
         }
 
         if ($billtype == 4) {
-            // ADVANCE / PRODUCTION ORDER
             $paymentgiven = $paytotal;
-            $changegiven  = 0; // no change given on advance orders
+            $changegiven  = 0;
         }
 
-        // billtype == 3 (Credit) intentionally leaves paymentgiven/changegiven
-        // at 0 unless an "Advance Payment Now" amount was entered on the
-        // credit-confirm modal — in that case $paytotal already carries it,
-        // so record it the same way as an advance order.
         if ($billtype == 3 && $paytotal > 0) {
             $paymentgiven = $paytotal;
             $changegiven  = 0;
@@ -480,9 +462,6 @@ class Directsaleinfo extends CI_Model {
         $this->db->insert('tbl_invoice', $data);
         $invoiceID = $this->db->insert_id();
 
-        // =========================
-        // INVOICE DETAILS
-        // =========================
         foreach ($tableData as $rowtabledata) {
 
             $data = array(
@@ -499,7 +478,6 @@ class Directsaleinfo extends CI_Model {
 
             $this->db->insert('tbl_invoice_detail', $data);
 
-            // STOCK REDUCTION (FIFO)
             $qtyToReduce = $rowtabledata['col_2'];
 
             $this->db->select('idtbl_stock, qty');
@@ -528,21 +506,13 @@ class Directsaleinfo extends CI_Model {
             }
         }
 
-        // =========================
-        // PAYMENT INSERT
-        // =========================
         if ($billtype == 1 || $billtype == 2 || $billtype == 4 || ($billtype == 3 && $paytotal > 0)) {
 
-            // FIX: strip change handed back to the customer before recording
-            // anything as "received". $changegiven is always 0 for card/credit/
-            // advance sales, so this only changes behavior for cash sales —
-            // it's the amount that actually stays in the drawer / applies
-            // to the invoice, not the amount the customer physically handed over.
             $appliedAmount = $paytotal - $changegiven;
 
             $paymentData = array(
                 'paydate'                                 => date('Y-m-d'),
-                'nettotal'                                => $appliedAmount,              // FIX: was $paytotal
+                'nettotal'                                => $appliedAmount,
                 'balance'                                 => max(0, $nettotal - $appliedAmount),
                 'status'                                  => 1,
                 'insertdatetime'                          => $insertdatetime,
@@ -561,11 +531,6 @@ class Directsaleinfo extends CI_Model {
 
             if (!empty($tableDataPay) && is_array($tableDataPay)) {
 
-                // FIX: change comes out of drawer cash, so strip it from the
-                // Cash-method row(s) specifically — Card/Cheque rows are exact,
-                // no change is ever given back on those. If there are multiple
-                // cash rows (rare, but the table supports it), the change is
-                // subtracted across them in order until fully accounted for.
                 $changeRemaining = $changegiven;
 
                 foreach ($tableDataPay as $rowPay) {
@@ -576,7 +541,6 @@ class Directsaleinfo extends CI_Model {
 
                     $lineAmount = isset($rowPay['col_6']) ? (float)$rowPay['col_6'] : $paytotal;
 
-                    // Only strip change from CASH rows (method 1)
                     if ($methodCode == 1 && $changeRemaining > 0) {
                         $strip = min($changeRemaining, $lineAmount);
                         $lineAmount      -= $strip;
@@ -585,7 +549,7 @@ class Directsaleinfo extends CI_Model {
 
                     $paymentDetail = array(
                         'method'                                     => $methodCode,
-                        'amount'                                      => $lineAmount, // FIX: net of change given back
+                        'amount'                                      => $lineAmount,
                         'bank'                                        => isset($rowPay['col_2']) ? $rowPay['col_2'] : '',
                         'branch'                                      => isset($rowPay['col_3']) ? $rowPay['col_3'] : '',
                         'chequeno'                                    => isset($rowPay['col_4']) ? $rowPay['col_4'] : '',
@@ -601,9 +565,6 @@ class Directsaleinfo extends CI_Model {
             }
         }
 
-        // =========================
-        // TRANSACTION FINALIZE
-        // =========================
         $this->db->trans_complete();
 
         $obj = new stdClass();
@@ -747,8 +708,6 @@ class Directsaleinfo extends CI_Model {
             return;
         }
 
-        // FIX: work out what's actually still owed BEFORE this payment,
-        // so we can record the true remaining balance AFTER it.
         $sqlPaidSoFarBefore = "SELECT IFNULL(SUM(p.nettotal),0) AS total
                         FROM tbl_invoice_payment p
                         JOIN tbl_invoice_payment_has_tbl_invoice ph
@@ -764,7 +723,7 @@ class Directsaleinfo extends CI_Model {
         $paymentData = array(
             'paydate'                                 => date('Y-m-d'),
             'nettotal'                                => $amount,
-            'balance'                                 => $remainingBalance, // FIX: real remaining balance, not hardcoded 0
+            'balance'                                 => $remainingBalance,
             'status'                                  => 1,
             'insertdatetime'                          => $insertdatetime,
             'tbl_user_idtbl_user'                     => $userID,

@@ -30,6 +30,7 @@ class Materialdetailinfo extends CI_Model{
 
         $materialname=$this->input->post('name');
         $materialcode=$this->input->post('code');
+        $barcode=$this->input->post('barcode'); 
         $rol=$this->input->post('rol');
         $materialcategory=$this->input->post('materialcategory');
         $comment=$this->input->post('comment');  
@@ -44,6 +45,7 @@ class Materialdetailinfo extends CI_Model{
             $data = array(
                 'materialname'=> $materialname, 
                 'materialinfocode'=> $materialcode, 
+                'barcode'=> $barcode,  
                 'reorderlevel'=> $rol, 
                 'comment'=> $comment, 
                 'status'=> '1', 
@@ -92,6 +94,7 @@ class Materialdetailinfo extends CI_Model{
             $data = array(
                 'materialname'=> $materialname, 
                 'materialinfocode'=> $materialcode, 
+                'barcode'=> $barcode,
                 'reorderlevel'=> $rol, 
                 'comment'=> $comment, 
                 'updatedatetime'=> $updatedatetime, 
@@ -288,12 +291,47 @@ class Materialdetailinfo extends CI_Model{
         $obj->id=$respond->row(0)->idtbl_material_info;
         $obj->materialname=$respond->row(0)->materialname;
         $obj->materialinfocode=$respond->row(0)->materialinfocode;
+        $obj->barcode=$respond->row(0)->barcode;
         $obj->rol=$respond->row(0)->reorderlevel;
         $obj->materialcategory=$respond->row(0)->tbl_material_category_idtbl_material_category ;
         $obj->comment=$respond->row(0)->comment;
 
 
         echo json_encode($obj);
+    }
+
+    public function Getbarcodedata(){
+        $materialIDs = $this->input->post('materialIDs');
+
+        $this->db->select('mi.idtbl_material_info, mi.materialname, mi.materialinfocode, mi.barcode, s.saleprice');
+        $this->db->from('tbl_material_info mi');
+        $this->db->join(
+            '(SELECT ts1.tbl_material_info_idtbl_material_info, ts1.saleprice
+            FROM tbl_stock ts1
+            INNER JOIN (
+                SELECT tbl_material_info_idtbl_material_info, MAX(idtbl_stock) AS maxid
+                FROM tbl_stock
+                WHERE status = 1
+                GROUP BY tbl_material_info_idtbl_material_info
+            ) ts2 ON ts2.maxid = ts1.idtbl_stock) s',
+            's.tbl_material_info_idtbl_material_info = mi.idtbl_material_info',
+            'left'
+        );
+        $this->db->where_in('mi.idtbl_material_info', $materialIDs);
+
+        $respond = $this->db->get();
+
+        $result = array();
+        foreach($respond->result() as $row){
+            $result[] = array(
+                'id'    => $row->idtbl_material_info,
+                'name'  => $row->materialname,
+                'code'  => !empty($row->barcode) ? $row->barcode : $row->materialinfocode,
+                'price' => $row->saleprice ? $row->saleprice : 0
+            );
+        }
+
+        echo json_encode($result);
     }
 
 }

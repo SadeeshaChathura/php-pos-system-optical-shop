@@ -30,11 +30,11 @@ include "include/topnavbar.php";
                         <div class="pos-search-row">
                             <div class="pos-search-box">
                                 <i class="fas fa-search"></i>
-                                <input type="text" id="productSearch" placeholder="Search by product name or code…" autofocus>
+                                <input type="text" id="productSearch" placeholder="Search by product name or code…">
                             </div>
                             <div class="pos-barcode-box">
                                 <i class="fas fa-barcode"></i>
-                                <input type="text" id="barcodeInput" placeholder="Scan or type barcode, then Enter">
+                                <input type="text" id="barcodeInput" placeholder="Scan or type barcode, then Enter" autofocus>
                             </div>
                             <button class="pos-btn-icon" id="btnBrowseProducts" title="Browse all products">
                                 <i class="fas fa-th-large"></i>
@@ -638,7 +638,14 @@ function parseMoney(str){
 }
 function initials(name){ return (name||'').split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join(''); }
 function openPosModal(id){ document.getElementById(id).classList.add('show'); }
-function closePosModal(id){ document.getElementById(id).classList.remove('show'); }
+
+// Closing any modal returns focus to the barcode scanner input, so the
+// cashier never needs to click back into it between actions.
+function closePosModal(id){
+    document.getElementById(id).classList.remove('show');
+    focusBarcode();
+}
+
 function closePosModalAndReload(){ location.reload(); }
 
 function posToast(icon, title, message, type){
@@ -766,25 +773,74 @@ $('.pos-sf-btn').on('click', function(){
 /* =========================================================
    BARCODE SCAN
    ========================================================= */
+var barcodeScanLock = false; // prevents double-fire from scanner key-repeat bounce
+
+function focusBarcode(){
+    setTimeout(function(){
+        if (!$('.pos-modal-overlay.show').length) {
+            $('#barcodeInput').focus();
+        }
+    }, 100);
+}
+
+function scanFeedback(success){
+    var $box = $('.pos-barcode-box');
+    $box.removeClass('scan-ok scan-fail').addClass(success ? 'scan-ok' : 'scan-fail');
+    setTimeout(function(){ $box.removeClass('scan-ok scan-fail'); }, 500);
+
+    // simple beep via Web Audio, no external sound file needed
+    try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = success ? 1200 : 300;
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + (success ? 0.08 : 0.18));
+    } catch(e) { /* audio not available, fail silently */ }
+}
+
 $('#barcodeInput').on('keypress', function(e){
     if (e.which === 13) {
         e.preventDefault();
         var code = $(this).val().trim();
-        if (!code) return;
+        $(this).val('');
+
+        if (!code || barcodeScanLock) return;
+        barcodeScanLock = true;
+        setTimeout(function(){ barcodeScanLock = false; }, 400);
 
         $.post(BASE_URL + 'Directsale/Getproductlistaccobarcode', { barcode: code }, function(result){
-            var obj = JSON.parse(result);
+            var obj;
+            try { obj = JSON.parse(result); } catch(err){ obj = { found: false }; }
+
             if (!obj.found) {
+                scanFeedback(false);
                 posToast('fas fa-exclamation-triangle', '', 'No product matches barcode "' + code + '"', 'danger');
+                focusBarcode();
                 return;
             }
             if (parseFloat(obj.stock) <= 0) {
+                scanFeedback(false);
                 posToast('fas fa-exclamation-triangle', '', obj.productname + ' is out of stock', 'danger');
+                focusBarcode();
                 return;
             }
-            openBatchPicker({ id: obj.id, name: obj.productname, code: obj.productcode, price: obj.price, stock: obj.stock });
+
+            scanFeedback(true);
+
+            var product = { id: obj.id, name: obj.productname, code: obj.productcode, price: obj.price, stock: obj.stock };
+
+            // Only one active batch -> skip the picker and go straight to
+            // Add to Cart. Multiple batches -> let the cashier choose.
+            if (obj.batchcount <= 1) {
+                openAddToCart($.extend({}, product, { batchno: obj.batchno || '' }));
+            } else {
+                openBatchPicker(product);
+            }
         });
-        $(this).val('');
     }
 });
 
@@ -1372,11 +1428,6 @@ function submitSale(billtype, extra){
                 $('#receiptMethod').text(methodLabel);
                 openPosModal('modalReceipt');
 
-                // Cash/Card -> normal POS receipt.
-                // Credit AND Advance Order -> credit-style receipt (shows
-                // balance due, or PAID IN FULL once fully settled). This
-                // same endpoint is used again from the Settle Balance flow
-                // below to print the final completion bill.
                 var printUrl = (billtype == 3 || billtype == 4)
                     ? BASE_URL + 'Directsale/Getcreditprintbill/' + obj.invoiceid
                     : BASE_URL + 'Directsale/Getposprintbill/' + obj.invoiceid;
@@ -1460,8 +1511,6 @@ $('#btnCompleteSettle').on('click', function(){
         closePosModal('modalSettleBalance');
         posToast('fas fa-check-circle','', obj.settled ? 'Order fully settled — printing bill' : 'Partial payment recorded', 'success');
 
-        // Reprint via the credit-style receipt: shows "PAID IN FULL" once
-        // settled=1, or the updated remaining balance for a partial top-up.
         window.open(BASE_URL + 'Directsale/Getcreditprintbill/' + obj.invoiceid, '_blank');
 
         if (obj.settled) {
@@ -1636,7 +1685,7 @@ $('#btnApplyBillsFilter').on('click', function(){ if (prevBillsTable) prevBillsT
    KEYBOARD SHORTCUTS
    ========================================================= */
 $(document).on('keydown', function(e){
-    if (e.key === 'Escape') { $('.pos-modal-overlay.show').removeClass('show'); }
+    if (e.key === 'Escape') { $('.pos-modal-overlay.show').removeClass('show'); focusBarcode(); }
     if (e.key === 'F2') { e.preventDefault(); openPosModal('modalBrowse'); loadBrowseCategories(); loadBrowseTable(); }
     if (e.key === 'F4' && !$('.pos-modal-overlay.show').length) {
         e.preventDefault();
@@ -1654,6 +1703,7 @@ $(document).ready(function(){
     renderCart();
     setCustomer(selectedCustomer);
     $('#hidewarrantystatus').val('0');
+    focusBarcode();
 });
 </script>
 
