@@ -75,7 +75,7 @@ class Purchaseorderprintinfo extends CI_Model{
         if ($row->email)        { $supMeta .= '<br>' . htmlspecialchars($row->email); }
 
         $html = $this->_renderPorderShell(array(
-            'po_no'            => 'KND/PO-' . str_pad($row->idtbl_porder, 6, '0', STR_PAD_LEFT),
+            'po_no'            => 'CX/PO-' . str_pad($row->idtbl_porder, 6, '0', STR_PAD_LEFT),
             'orderdate'        => date('d M Y', strtotime($row->orderdate)),
             'duedate'          => date('d M Y', strtotime($row->duedate)),
             'confirm_cls'      => $confirmStatusCls,
@@ -104,12 +104,12 @@ class Purchaseorderprintinfo extends CI_Model{
    private function _renderPorderShell($d){
 
     // Business details (hardcoded brand info shown in header & footer)
-    $bizPhone = '0719622717 / 0703955682';
-    $bizEmail = 'Kannadiyaopticalservice@gmail.com';
-    $bizAddr  = 'Kannadiya Pvt Ltd, Thalawa Road, Kekirawa';
+    $bizPhone = '0710000000 / 0700000000';
+    $bizEmail = 'opticalservice@gmail.com';
+    $bizAddr  = 'CalciteX Pvt Ltd, Kandy Road, Pasyala';
 
     $this->load->helper('url');
-    $bizLogoPath = base_url('images/clientlogo.png');
+    $bizLogoPath = base_url('images/QPb.png');
 
     $headerBrandBlock = '
     <div class="brand-block">

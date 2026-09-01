@@ -259,7 +259,7 @@ class Directsalereceiptinfo extends CI_Model {
                 <div class="w-text">
                     <div class="w-title">Frame Warranty <span class="badge">Lifetime</span></div>
                     <div class="w-desc">
-                        This frame is covered by කණ්ණාඩිය Optical Lifetime Warranty against manufacturing
+                        This frame is covered by CalciteX Optical Lifetime Warranty against manufacturing
                         defects. Present this invoice for free repair or replacement assessment. Excludes accidental damage, misuse, and normal wear.
                     </div>
                 </div>
@@ -378,7 +378,7 @@ class Directsalereceiptinfo extends CI_Model {
 
     <div class="inv-header">
         <div class="brand-block">
-            <img src="' . base_url('images/clientlogo.png') . '" 
+            <img src="' . base_url('images/QPb.png') . '" 
                 alt="Logo"
                 style="height:70px; width:auto; display:block;">
         </div>
@@ -443,10 +443,10 @@ class Directsalereceiptinfo extends CI_Model {
 
     <div class="footer-area">
         <div class="footer-thanks-row">
-            <div class="f-text">Thank you for choosing කණ්ණාඩිය Optical!</div>
+            <div class="f-text">Thank you for choosing CalciteX Optical!</div>
         </div>
         <div class="footer-contact">
-            <b>කණ්ණාඩිය Pvt Ltd</b> &middot; Thalawa Road, Kekirawa &middot; 0719622717 / 0703955682 &middot; Kannadiyaopticalservice@gmail.com
+            <b>CalciteX Pvt Ltd</b> &middot; Kandy Road, Pasyala &middot; 0710000000 / 0700000000 &middot; opticalservice@gmail.com
         </div>
     </div>
 </div>

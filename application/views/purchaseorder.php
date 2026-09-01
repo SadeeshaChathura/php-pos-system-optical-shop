@@ -252,7 +252,7 @@ include "include/topnavbar.php";
                 {
                     "data": "idtbl_porder",
                     "render": function (data, type, row) {
-                        return 'KND/PO-' + String(data).padStart(6, '0');
+                        return 'CX/PO-' + String(data).padStart(6, '0');
                     }
                 },
                 {

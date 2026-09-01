@@ -79,11 +79,11 @@ class Goodreceiveprintinfo extends CI_Model{
         // the real PO id; a "direct" GRN (no PO) falls back to id = 1 at
         // insert time (see Goodreceiveinfo::Goodreceiveinsertupdate).
         $linkedPo = ($row->tbl_porder_idtbl_porder && $row->tbl_porder_idtbl_porder != 1)
-            ? 'KND/PO-' . str_pad($row->tbl_porder_idtbl_porder, 6, '0', STR_PAD_LEFT)
+            ? 'CX/PO-' . str_pad($row->tbl_porder_idtbl_porder, 6, '0', STR_PAD_LEFT)
             : 'Direct GRN (no PO)';
 
         $html = $this->_renderGrnShell(array(
-            'grn_no'           => 'KND/GRN-' . str_pad($row->idtbl_grn, 6, '0', STR_PAD_LEFT),
+            'grn_no'           => 'CX/GRN-' . str_pad($row->idtbl_grn, 6, '0', STR_PAD_LEFT),
             'grndate'          => date('d M Y', strtotime($row->grndate)),
             'approve_cls'      => $approveStatusCls,
             'approve_text'     => $approveStatusText,
@@ -118,12 +118,12 @@ class Goodreceiveprintinfo extends CI_Model{
      */
    private function _renderGrnShell($d){
 
-    $bizPhone = '0719622717 / 0703955682';
-    $bizEmail = 'Kannadiyaopticalservice@gmail.com';
-    $bizAddr  = 'Kannadiya Pvt Ltd, Thalawa Road, Kekirawa';
+    $bizPhone = '0710000000 / 0700000000';
+    $bizEmail = 'opticalservice@gmail.com';
+    $bizAddr  = 'CalciteX Pvt Ltd, Kandy Road, Pasyala';
 
     $this->load->helper('url');
-    $bizLogoPath = base_url('images/clientlogo.png');
+    $bizLogoPath = base_url('images/QPb.png');
 
     $headerBrandBlock = '
     <div class="brand-block">

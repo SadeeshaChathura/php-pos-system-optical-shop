@@ -433,10 +433,10 @@ class Purchaseorderinfo extends CI_Model{
 
                 <div class="company-box">
                     <div class="po-title">PURCHASE ORDER</div>
-                    <strong>කන්නාඩිය Pvt Ltd</strong><br>
-                    0719622717 / 0703955682<br>
-                    Thalawa Road, Kekirawa<br>
-                    <a href="mailto:Kannadiyaopticalservice@gmail.com">Kannadiyaopticalservice@gmail.com</a>
+                    <strong>CalciteX Pvt Ltd</strong><br>
+                    0710000000 / 0700000000<br>
+                    Kandy Road, Pasyala<br>
+                    <a href="mailto:opticalservice@gmail.com">opticalservice@gmail.com</a>
                 </div>
 
                 <div class="supplier-box">

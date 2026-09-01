@@ -78,7 +78,7 @@ include "include/topnavbar.php";
                                 <option value="">Select</option>
                                 <?php foreach($porderlist->result() as $rowporderlist){ ?>
                                 <option value="<?php echo $rowporderlist->idtbl_porder; ?>">
-                                    <?php echo 'KND/PO-' . str_pad($rowporderlist->idtbl_porder, 6, '0', STR_PAD_LEFT); ?>
+                                    <?php echo 'CX/PO-' . str_pad($rowporderlist->idtbl_porder, 6, '0', STR_PAD_LEFT); ?>
                                 </option>
                                 <?php } ?>
                             </select>
@@ -251,13 +251,13 @@ include "include/topnavbar.php";
                 {
                     "data": "idtbl_grn",
                     "render": function (data, type, row) {
-                        return 'KND/GRN-' + String(data).padStart(6, '0');
+                        return 'CX/GRN-' + String(data).padStart(6, '0');
                     }
                 },
                 {
                     "data": "tbl_porder_idtbl_porder",
                     "render": function (data, type, row) {
-                        return Number(data) ? 'KND/PO-' + String(data).padStart(6, '0') : 'Direct GRN (no PO)';
+                        return Number(data) ? 'CX/PO-' + String(data).padStart(6, '0') : 'Direct GRN (no PO)';
                     }
                 },
                 {

@@ -636,7 +636,7 @@ include "include/topnavbar.php";
             // Header / letterhead
             html += '<div class="rx-header">';
             html += '<p class="rx-clinic-name"><i class="fas fa-eye mr-2"></i>Optical Prescription</p>';
-            html += '<p class="rx-clinic-tag">Kannadiya Opticians</p>';
+            html += '<p class="rx-clinic-tag">CalciteX Opticians</p>';
             html += '<div class="rx-badge">';
             html += '<div class="rx-date">' + p.prescriptiondate + '</div>';
             html += '<div class="rx-label">Prescription Date</div>';
