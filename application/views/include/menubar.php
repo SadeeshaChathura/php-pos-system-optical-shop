@@ -419,11 +419,19 @@ function checkprivilege($arraymenu, $menuID, $type){
         </div>
     </div>
 
-    <div class="sidenav-footer d-flex align-items-center">
-        <div class="qp-avatar-initials"><?php echo strtoupper(substr($_SESSION['name'], 0, 1)); ?></div>
-        <div class="sidenav-footer-content">
-            <div class="sidenav-footer-subtitle">Logged in as</div>
-            <div class="sidenav-footer-title"><?php echo ucfirst($_SESSION['name']); ?></div>
+    <div class="sidenav-footer">
+        <div class="qp-user-pill">
+            <div class="qp-avatar-ring">
+                <div class="qp-avatar-initials">
+                    <?php echo strtoupper(substr($_SESSION['name'], 0, 1)); ?>
+                </div>
+            </div>
+            <div class="sidenav-footer-content">
+                <div class="sidenav-footer-title"><?php echo ucfirst($_SESSION['name']); ?></div>
+                <div class="qp-status-badge">
+                    <span class="qp-status-pulse"></span> Active now
+                </div>
+            </div>
         </div>
     </div>
 </nav>

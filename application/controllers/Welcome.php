@@ -108,4 +108,12 @@ class Welcome extends CI_Controller {
 		$result   = CompanyBranchList($recordID);
 		echo json_encode($result);
 	}
+	public function Getnotifications(){
+		$this->load->model('Notificationinfo');
+		$result = array(
+			'notifications' => $this->Notificationinfo->GetNotifications(8),
+			'unreadcount'   => $this->Notificationinfo->GetUnreadCount()
+		);
+		echo json_encode($result);
+	}
 }

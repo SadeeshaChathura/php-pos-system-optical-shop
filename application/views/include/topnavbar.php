@@ -28,43 +28,20 @@
         <li class="nav-item dropdown no-caret mr-2 dropdown-notifications">
             <a class="btn btn-icon btn-transparent-dark qp-notif-trigger" id="navbarDropdownNotifications" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i data-feather="bell"></i>
-                <span class="qp-notif-badge">3</span>
+                <span class="qp-notif-badge" id="qpNotifBadge" style="display:none;">0</span>
             </a>
             <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up qp-notif-menu" aria-labelledby="navbarDropdownNotifications">
                 <div class="qp-notif-header">
                     <span>Notifications</span>
-                    <span class="qp-notif-count-pill">3 new</span>
+                    <button type="button" class="qp-notif-markall" id="qpNotifMarkAll" style="display:none;">Mark all read</button>
+                    <span class="qp-notif-count-pill" id="qpNotifCountPill" style="display:none;">0 new</span>
                 </div>
 
-                <div class="qp-notif-list">
-                    <a class="qp-notif-item qp-notif-unread" href="javascript:void(0);">
-                        <div class="qp-notif-icon qp-notif-icon-info"><i data-feather="file-text"></i></div>
-                        <div class="qp-notif-content">
-                            <div class="qp-notif-text">New invoice <strong>INV-000231</strong> created</div>
-                            <div class="qp-notif-time">2 min ago</div>
-                        </div>
-                        <span class="qp-notif-dot"></span>
-                    </a>
-
-                    <a class="qp-notif-item qp-notif-unread" href="javascript:void(0);">
-                        <div class="qp-notif-icon qp-notif-icon-warning"><i data-feather="alert-triangle"></i></div>
-                        <div class="qp-notif-content">
-                            <div class="qp-notif-text">Stock low: <strong>Paracetamol 500mg</strong></div>
-                            <div class="qp-notif-time">1 hour ago</div>
-                        </div>
-                        <span class="qp-notif-dot"></span>
-                    </a>
-
-                    <a class="qp-notif-item" href="javascript:void(0);">
-                        <div class="qp-notif-icon qp-notif-icon-success"><i data-feather="truck"></i></div>
-                        <div class="qp-notif-content">
-                            <div class="qp-notif-text">PO <strong>KND/PO-000045</strong> approved</div>
-                            <div class="qp-notif-time">Yesterday</div>
-                        </div>
-                    </a>
+                <div class="qp-notif-list" id="qpNotifList">
+                    <div class="qp-notif-empty">Loading...</div>
                 </div>
 
-                <a href="javascript:void(0);" class="qp-notif-footer">View all notifications</a>
+                <a href="<?php echo base_url() . 'Welcome/Dashboard'; ?>" class="qp-notif-footer">View dashboard</a>
             </div>
         </li>
 
@@ -254,5 +231,125 @@ setInterval(updateDateTime, 1000);
             applyMode('system');
         }
     });
+})();
+
+// ---- live notification feed (with click-to-read + mark all read) ----
+(function () {
+    var listEl      = document.getElementById('qpNotifList');
+    var badgeEl     = document.getElementById('qpNotifBadge');
+    var pillEl      = document.getElementById('qpNotifCountPill');
+    var markAllBtn  = document.getElementById('qpNotifMarkAll');
+    var endpoint    = '<?php echo base_url() . "Welcome/Getnotifications"; ?>';
+    var READ_KEY    = 'qp-notif-read-ids';
+
+    function getReadIds() {
+        try { return JSON.parse(localStorage.getItem(READ_KEY)) || []; }
+        catch (e) { return []; }
+    }
+
+    function markRead(id) {
+        var ids = getReadIds();
+        if (ids.indexOf(id) === -1) {
+            ids.push(id);
+            if (ids.length > 200) ids = ids.slice(-200); // cap growth
+            localStorage.setItem(READ_KEY, JSON.stringify(ids));
+        }
+    }
+
+    function timeAgo(rawTime) {
+        var diffSec = Math.floor((Date.now() - new Date(rawTime.replace(' ', 'T')).getTime()) / 1000);
+        if (diffSec < 60) return 'Just now';
+        if (diffSec < 3600) return Math.floor(diffSec / 60) + ' min ago';
+        if (diffSec < 86400) return Math.floor(diffSec / 3600) + ' hour' + (Math.floor(diffSec / 3600) > 1 ? 's' : '') + ' ago';
+        if (diffSec < 172800) return 'Yesterday';
+        return Math.floor(diffSec / 86400) + ' days ago';
+    }
+
+    function iconClass(type) {
+        return { warning: 'qp-notif-icon-warning', danger: 'qp-notif-icon-danger',
+                 info: 'qp-notif-icon-info', success: 'qp-notif-icon-success' }[type] || 'qp-notif-icon-info';
+    }
+
+    function updateCounters(unread) {
+        if (unread > 0) {
+            badgeEl.textContent = unread > 9 ? '9+' : unread;
+            badgeEl.style.display = '';
+            pillEl.textContent = unread + ' new';
+            pillEl.style.display = '';
+            markAllBtn.style.display = '';
+        } else {
+            badgeEl.style.display = 'none';
+            pillEl.style.display = 'none';
+            markAllBtn.style.display = 'none';
+        }
+    }
+
+    function bindItemClicks() {
+        listEl.querySelectorAll('.qp-notif-item').forEach(function (el) {
+            el.addEventListener('click', function () {
+                if (!el.classList.contains('qp-notif-unread')) return; // already read
+
+                var id = el.getAttribute('data-notif-id');
+                markRead(id);
+                el.classList.remove('qp-notif-unread');
+                var dot = el.querySelector('.qp-notif-dot');
+                if (dot) dot.remove();
+
+                var currentUnread = parseInt(badgeEl.textContent, 10) || 0;
+                updateCounters(Math.max(0, currentUnread - 1));
+                // link navigation proceeds normally after this
+            });
+        });
+    }
+
+    function render(data) {
+        var notifications = data.notifications || [];
+        var readIds = getReadIds();
+        var unread = notifications.filter(function (n) { return readIds.indexOf(n.id) === -1; }).length;
+
+        updateCounters(unread);
+
+        if (!notifications.length) {
+            listEl.innerHTML = '<div class="qp-notif-empty">You\'re all caught up</div>';
+            return;
+        }
+
+        listEl.innerHTML = notifications.map(function (n) {
+            var isUnread = readIds.indexOf(n.id) === -1;
+            return '<a class="qp-notif-item' + (isUnread ? ' qp-notif-unread' : '') + '" href="' + n.link + '" data-notif-id="' + n.id + '">' +
+                       '<div class="qp-notif-icon ' + iconClass(n.type) + '"><i data-feather="' + n.icon + '"></i></div>' +
+                       '<div class="qp-notif-content">' +
+                           '<div class="qp-notif-text">' + n.text + '</div>' +
+                           '<div class="qp-notif-time">' + timeAgo(n.raw_time) + '</div>' +
+                       '</div>' +
+                       (isUnread ? '<span class="qp-notif-dot"></span>' : '') +
+                   '</a>';
+        }).join('');
+
+        if (typeof feather !== 'undefined') feather.replace();
+        bindItemClicks();
+    }
+
+    function loadNotifications() {
+        fetch(endpoint, { credentials: 'same-origin' })
+            .then(function (res) { return res.json(); })
+            .then(render)
+            .catch(function () {
+                listEl.innerHTML = '<div class="qp-notif-empty">Couldn\'t load notifications</div>';
+            });
+    }
+
+    markAllBtn.addEventListener('click', function () {
+        listEl.querySelectorAll('.qp-notif-item.qp-notif-unread').forEach(function (el) {
+            markRead(el.getAttribute('data-notif-id'));
+            el.classList.remove('qp-notif-unread');
+            var dot = el.querySelector('.qp-notif-dot');
+            if (dot) dot.remove();
+        });
+        updateCounters(0);
+    });
+
+    loadNotifications();
+    setInterval(loadNotifications, 60000); // refresh every minute
 })();
 </script>
