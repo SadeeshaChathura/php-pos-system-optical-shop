@@ -7,6 +7,7 @@
 <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Mottie-Keyboard/1.30.1/js/jquery.keyboard.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/script.js"></script>
+<script src="<?php echo base_url() ?>assets/js/sidebar-popover.js"></script>
 <script src="<?php echo base_url() ?>assets/js/bootstrap-notify.js"></script>
 <script src="<?php echo base_url() ?>assets/js/select2.full.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jquery.serializejson.js"></script>

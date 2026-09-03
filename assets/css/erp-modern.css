@@ -888,3 +888,88 @@ label.font-weight-bold{
 .sidenav-toggled .qp-sidenav-toggle{
   right: 0.35rem;
 }
+
+/* =====================================================================
+   SIDEBAR SUBMENU FLYOUT — "comment box" popover restyle
+   Restyles the .collapse submenu panel that sidebar-popover.js opens on
+   hover (see sidenav-item.qp-popover-open > .collapse). Overrides the
+   teal-gradient popover look from the old sidebar override CSS so it
+   matches this theme: a light card floating off the dark rail, with a
+   small speech-bubble tail pointing back at the icon that triggered it.
+   ===================================================================== */
+.sidenav-collapsed .sidenav-item > .collapse{
+  background: var(--erp-surface) !important;
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius) !important;
+  box-shadow: var(--erp-shadow-md) !important;
+  padding: 0.4rem !important;
+  color: var(--erp-text) !important;
+}
+
+/* speech-bubble tail — small square rotated 45deg, tucked behind the
+   panel's left edge so it looks like it's pointing at the hovered icon */
+.sidenav-collapsed .sidenav-item > .collapse::before{
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 22px;
+  width: 12px;
+  height: 12px;
+  background: var(--erp-surface);
+  border-left: 1px solid var(--erp-border);
+  border-bottom: 1px solid var(--erp-border);
+  transform: rotate(45deg);
+  border-radius: 0 0 0 2px;
+  z-index: -1;
+}
+
+/* header row inside the flyout (group title) */
+.sidenav-collapsed .qp-popover-header{
+  padding: 0.55rem 0.7rem 0.5rem !important;
+  margin-bottom: 0.25rem !important;
+  border-bottom: 1px solid var(--erp-border) !important;
+}
+.sidenav-collapsed .qp-popover-header span{
+  color: var(--erp-text-muted) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.sidenav-collapsed .qp-popover-header .qp-popover-close{
+  color: var(--erp-text-muted) !important;
+}
+.sidenav-collapsed .qp-popover-header .qp-popover-close:hover{
+  color: var(--erp-primary) !important;
+}
+
+/* submenu links inside the flyout — flat rows, primary-blue hover/active */
+.sidenav-collapsed .sidenav-item.qp-popover-open .sidenav-menu-nested{
+  border-left: none !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+.sidenav-collapsed .sidenav-item.qp-popover-open .sidenav-menu-nested .nav-link{
+  color: var(--erp-text) !important;
+  font-weight: 500 !important;
+  padding: 0.55rem 0.7rem !important;
+  border-radius: var(--erp-radius-sm) !important;
+  text-shadow: none !important;
+}
+.sidenav-collapsed .sidenav-item.qp-popover-open .sidenav-menu-nested .nav-link:hover{
+  background-color: var(--erp-primary-soft) !important;
+  color: var(--erp-primary) !important;
+}
+.sidenav-collapsed .sidenav-item.qp-popover-open .sidenav-menu-nested .nav-link.active{
+  background-color: var(--erp-primary) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+/* the icon row that's currently flyout-open gets a subtle highlight,
+   same treatment the theme already uses for hovered nav-links */
+.sidenav-collapsed .sidenav-item.qp-popover-open > a.nav-link{
+  background-color: rgba(255,255,255,0.06) !important;
+  color: #fff !important;
+}
