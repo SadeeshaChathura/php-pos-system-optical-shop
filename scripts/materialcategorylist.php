@@ -31,6 +31,7 @@ $primaryKey = 'idtbl_material_category';
 $columns = array(
 	array( 'db' => '`u`.`idtbl_material_category`', 'dt' => 'idtbl_material_category', 'field' => 'idtbl_material_category' ),
 	array( 'db' => '`u`.`categoryname`', 'dt' => 'categoryname', 'field' => 'categoryname' ),
+	array( 'db' => '`u`.`categorycode`', 'dt' => 'categorycode', 'field' => 'categorycode' ),
 	array( 'db' => '`u`.`status`', 'dt' => 'status', 'field' => 'status' )
 );
 

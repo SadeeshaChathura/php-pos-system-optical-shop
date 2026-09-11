@@ -16,6 +16,7 @@ class Materialcategoryinfo extends CI_Model{
         $userID=$_SESSION['userid'];
 
         $category=$this->input->post('category');
+        $code=$this->input->post('code');
 
         $recordOption=$this->input->post('recordOption');
         if(!empty($this->input->post('recordID'))){$recordID=$this->input->post('recordID');}
@@ -25,6 +26,7 @@ class Materialcategoryinfo extends CI_Model{
         if($recordOption==1){
             $data = array(
                 'categoryname'=> $category, 
+                'categorycode'=> $code,
                 'status'=> '1', 
                 'insertdatetime'=> $updatedatetime, 
                 'tbl_user_idtbl_user'=> $userID
@@ -69,6 +71,7 @@ class Materialcategoryinfo extends CI_Model{
         else{
             $data = array(
                 'categoryname'=> $category, 
+                'categorycode'=> $code,
                 'updatedatetime' => $updatedatetime
             );
 
@@ -261,6 +264,7 @@ class Materialcategoryinfo extends CI_Model{
         $obj=new stdClass();
         $obj->id=$respond->row(0)->idtbl_material_category;
         $obj->categoryname=$respond->row(0)->categoryname;
+        $obj->categorycode=$respond->row(0)->categorycode;
 
         echo json_encode($obj);
     }

@@ -1,17 +1,12 @@
 <?php
 class Materialdetailinfo extends CI_Model{
     public function generateMaterialCode(){
-        $this->db->select("MAX(
-            CASE 
-                WHEN materialinfocode REGEXP '^MAT-' THEN CAST(SUBSTRING(materialinfocode, 5) AS UNSIGNED)
-                ELSE CAST(materialinfocode AS UNSIGNED)
-            END
-        ) as maxcode", false);
+        $this->db->select("MAX(CAST(SUBSTRING(materialinfocode, 5) AS UNSIGNED)) as maxcode", false);
         $this->db->from('tbl_material_info');
         $query = $this->db->get();
         $row = $query->row();
 
-        $nextNumber = ($row && $row->maxcode) ? $row->maxcode + 1 : 100;
+        $nextNumber = ($row && $row->maxcode) ? $row->maxcode + 1 : 1;
 
         return 'PRO-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
     }

@@ -64,6 +64,7 @@ include "include/topnavbar.php";
                                             <tr>
                                                 <th>#</th>
                                                 <th>Material Category</th>
+                                                <th>Category Code</th>
                                                 <th class="text-right">Actions</th>
                                             </tr>
                                         </thead>
@@ -128,6 +129,9 @@ include "include/topnavbar.php";
                 },
                 {
                     "data": "categoryname"
+                },
+                {
+                    "data": "categorycode"
                 },
                 {
                     "targets": -1,
